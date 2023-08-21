@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Theme {
+  themeId String @id(map: "pk_theme_id") @default(dbgenerated("gen_random_uuid()")) @map("theme_id")
+  name    String @unique
+  posts   Post[]
+}
+
+model User {
+  userId         String    @id(map: "pk_user_id") @default(dbgenerated("gen_random_uuid()")) @map("user_id")
+  username       String    @unique
+  email          String    @unique
+  password       String
+  description    String
+  profilePicture String    @map("profile_picture")
+  token          Token[]
+  posts          Post[]
+  comments       Comment[]
+  replies        Reply[]
+}
+
+model Post {
+  postId    String    @id(map: "pk_post_id") @default(dbgenerated("gen_random_uuid()")) @map("post_id")
+  themeId   String    @map("theme_id")
+  message   String
+  images    String[]
+  anonymous Boolean
+  likes     User[]
+  theme     Theme     @relation(fields: [themeId], references: [themeId])
+  comments  Comment[]
+}
+
+model Comment {
+  commentId String   @id(map: "pk_comment_id") @default(dbgenerated("gen_random_uuid()")) @map("comment_id")
+  postId    String   @map("post_id")
+  message   String
+  images    String[]
+  anonymous Boolean
+  likes     User[]
+  replies   Reply[]
+  post      Post     @relation(fields: [postId], references: [postId], onDelete: Cascade)
+}
+
+model Reply {
+  replyId   String   @id(map: "pk_reply_id") @default(dbgenerated("gen_random_uuid()")) @map("reply_id")
+  commentId String   @map("comment_id")
+  message   String
+  images    String[]
+  anonymous Boolean
+  likes     User[]
+  Comment   Comment  @relation(fields: [commentId], references: [commentId], onDelete: Cascade)
+}
+
+model Token {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiredBy DateTime
+}
