@@ -32,7 +32,7 @@ model Post {
   message   String
   images    String[]
   anonymous Boolean
-  author    User      @relation(fields: [authorId], references: [userId])
+  author    User      @relation(fields: [authorId], references: [userId], onDelete: Cascade)
   likes     String[]
   theme     Theme     @relation(fields: [themeId], references: [themeId])
   comments  Comment[]
@@ -48,7 +48,7 @@ model Comment {
   likes     String[]
   replies   Reply[]
   post      Post     @relation(fields: [postId], references: [postId], onDelete: Cascade)
-  author    User     @relation(fields: [authorId], references: [userId])
+  author    User     @relation(fields: [authorId], references: [userId], onDelete: Cascade)
   authorId  String
 }
 
@@ -60,7 +60,7 @@ model Reply {
   anonymous Boolean
   likes     String[]
   Comment   Comment  @relation(fields: [commentId], references: [commentId], onDelete: Cascade)
-  author    User     @relation(fields: [authorId], references: [userId])
+  author    User     @relation(fields: [authorId], references: [userId], onDelete: Cascade)
   authorId  String
 }
 

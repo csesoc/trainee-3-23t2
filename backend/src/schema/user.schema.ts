@@ -20,3 +20,11 @@ export const UserLoginSchema = z.object({
   username: z.string(),
   password: z.string(),
 });
+
+export const UpdateUserSchema = z.object({
+  username: z.string(),
+  email: z.string(),
+  password: z.string(),
+  description: z.string(),
+  profilePicture: z.string(),
+});

@@ -4,7 +4,12 @@ import cors from "cors";
 import errorHandler from "middleware-http-errors";
 import { loginUser, logoutUser, registerUser } from "./functions/auth";
 import { validateRequest, verifySession } from "./utils/middleware";
-import { UserLoginSchema, UserRegisterSchema } from "./schema/user.schema";
+import {
+  UpdateUserSchema,
+  UserLoginSchema,
+  UserRegisterSchema,
+  UserType,
+} from "./schema/user.schema";
 import {
   AllPostsSchema,
   LikePostSchema,
@@ -43,6 +48,7 @@ import {
   likeReply,
   updateReply,
 } from "./functions/reply";
+import { deleteUser, getUser, updateUser } from "./functions/user";
 
 const logger = getLogger();
 const app = express();
@@ -435,11 +441,79 @@ app.post(
   }
 );
 
-// TODO: GET USER INFORMATION
+// GET USER INFORMATION
+app.get(
+  "/user/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Responding to GET /user/:userId");
+    try {
+      const { userId } = req.params;
+      if (
+        (await verifyToken(
+          req.headers.authorization,
+          req.headers.id as string
+        )) &&
+        req.headers.id === userId
+      ) {
+        // User sees all post/comment/replies that is both anonymous and not
+        const result = await getUser(userId, true);
+        return res.status(200).json(result);
+      }
+      // User only sees all post/comment/replies that is not anonymous
+      const result = await getUser(userId, false);
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-// TODO: UPDATE USER INFORMATION
+// UPDATE USER INFORMATION
+app.put(
+  "/user/:userId",
+  [verifySession, validateRequest(UpdateUserSchema, "body")],
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Responding into PUT /user/:userId");
+    try {
+      const { userId } = req.params;
+      if (req.headers.id !== userId) {
+        return res.status(401).json({ error: "Unauthorised" });
+      }
+      const { username, email, password, description, profilePicture } =
+        req.body;
+      const result = await updateUser(
+        userId,
+        username,
+        email,
+        password,
+        description,
+        profilePicture
+      );
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-// TODO: DELETE USER
+// DELETE USER
+app.delete(
+  "/user/:userId",
+  verifySession,
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Responding into DELETE /user/:userId");
+    try {
+      const { userId } = req.params;
+      if (req.headers.id !== userId) {
+        return res.status(401).json("Unauthorised");
+      }
+      const result = await deleteUser(userId);
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 app.use(errorHandler());
 
