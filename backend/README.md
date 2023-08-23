@@ -24,6 +24,10 @@
 | /comment/:commentId      |  PUT   |         Edit a comment          |          Request Headers: { Authorization: string, id: string }, Request Body: { message: string, images: string[], anonymous: boolean }          |         Return: **Comment** - refer to CommentSchema in comment.schema.ts |
 | /comment/:commentId      | DELETE |        Delete a comment         |                                              Request Headers: { Authorization: string, id: string }                                               |                                                                Return: {} |
 | /comment/like/:commentId |  POST  |      Like/Unlike a comment      |                              Request Headers: { Authorization: string, id: string } Request Body: { like: boolean }                               |                                                                Return: {} |
+| /reply/:postId           |  POST  |       Reply to a comment        |          Request Headers: { Authorization: string, id: string }, Request Body: { message: string, images: string[], anonymous: boolean }          |               Return: **Reply** - refer to ReplySchema in reply.schema.ts |
+| /reply/:commentId        |  PUT   |          Edit a reply           |          Request Headers: { Authorization: string, id: string }, Request Body: { message: string, images: string[], anonymous: boolean }          |               Return: **Reply** - refer to ReplySchema in reply.schema.ts |
+| /reply/:commentId        | DELETE |         Delete a reply          |                                              Request Headers: { Authorization: string, id: string }                                               |                                                                Return: {} |
+| /reply/like/:commentId   |  POST  |       Like/Unlike a reply       |                              Request Headers: { Authorization: string, id: string } Request Body: { like: boolean }                               |                                                                Return: {} |
 
 ## Tools and Frameworks
 

@@ -11,3 +11,13 @@ export const ReplySchema: ZodSchema = z.object({
 });
 
 export type ReplyType = z.infer<typeof ReplySchema>;
+
+export const PostReplySchema = z.object({
+  message: z.string(),
+  images: z.array(z.string()),
+  anonymous: z.boolean(),
+});
+
+export const LikeReplySchema = z.object({
+  like: z.boolean(),
+});

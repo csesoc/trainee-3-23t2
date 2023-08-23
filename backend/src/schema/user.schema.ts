@@ -4,7 +4,6 @@ export const UserSchema: ZodSchema = z.object({
   userId: z.string(),
   username: z.string(),
   email: z.string(),
-  password: z.string(),
   description: z.string(),
   profilePicture: z.string(),
 });

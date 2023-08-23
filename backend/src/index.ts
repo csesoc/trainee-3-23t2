@@ -32,6 +32,17 @@ import {
   editComment,
   likeComment,
 } from "./functions/comment";
+import {
+  LikeReplySchema,
+  PostReplySchema,
+  ReplyType,
+} from "./schema/reply.schema";
+import {
+  createNewReply,
+  deleteReply,
+  likeReply,
+  updateReply,
+} from "./functions/reply";
 
 const logger = getLogger();
 const app = express();
@@ -334,13 +345,95 @@ app.post(
   }
 );
 
-// TODO: REPLY TO A COMMENT
+// REPLY TO A COMMENT
+app.post(
+  "/reply/:commentId",
+  [verifySession, validateRequest(PostReplySchema, "body")],
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Responding to POST /reply/:commentId");
+    try {
+      const { id: userId } = req.headers;
+      const { commentId } = req.params;
+      const { message, images, anonymous } = req.body;
+      const result: ReplyType = await createNewReply(
+        userId as string,
+        commentId,
+        message,
+        images,
+        anonymous
+      );
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-// TODO: EDIT A REPLY
+// EDIT A REPLY
+app.put(
+  "/reply/:replyId",
+  [verifySession, validateRequest(PostReplySchema, "body")],
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Responding to PUT /reply/:replyId");
+    try {
+      const { id: userId } = req.headers;
+      const { replyId } = req.params;
+      const { message, images, anonymous } = req.body;
+      const result: ReplyType = await updateReply(
+        userId as string,
+        replyId,
+        message,
+        images,
+        anonymous
+      );
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-// TODO: DELETE A REPLY
+// DELETE A REPLY
+app.delete(
+  "/reply/:replyId",
+  [verifySession],
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Responding to DELETE /reply/:replyId");
+    try {
+      const { id: userId } = req.headers;
+      const { replyId } = req.params;
+      const result: Record<never, never> = await deleteReply(
+        userId as string,
+        replyId
+      );
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
-// TODO: LIKE OR UNLIKE A REPLY
+// LIKE OR UNLIKE A REPLY
+app.post(
+  "/reply/like/:replyId",
+  [verifySession, validateRequest(LikeReplySchema, "body")],
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Responding to POST /reply/like/:replyId");
+    try {
+      const { id: userId } = req.headers;
+      const { replyId } = req.params;
+      const { like } = req.body;
+      const result: Record<never, never> = await likeReply(
+        userId as string,
+        replyId,
+        like
+      );
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 // TODO: GET USER INFORMATION
 
