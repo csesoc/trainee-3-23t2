@@ -4,7 +4,7 @@
 
 - Install all dependencies `npm install`
 - Migrate prisma `DATABASE_URL=<database-url> npx prisma migrate dev`
-- Run backend `JWT_SECRET=<jwt-secret> DATABASE_URL=<database-url> npx prisma migrate dev`
+- Run backend `JWT_SECRET=<jwt-secret> DATABASE_URL=<database-url> npm run dev`
 
 ## Routes
 
