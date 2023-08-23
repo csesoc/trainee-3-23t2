@@ -26,3 +26,7 @@ export const NewPostSchema = z.object({
   anonymous: z.boolean(),
   themeId: z.string(),
 });
+
+export const LikePostSchema = z.object({
+  like: z.boolean(),
+});

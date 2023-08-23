@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 export const validateRequest = (
   schema: ZodSchema,
-  property: "body" | "query",
+  property: "body" | "query"
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req[property]);
@@ -25,10 +25,10 @@ export const validateRequest = (
   };
 };
 
-export const verifyToken = async (
+export const verifySession = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const secret = process.env.JWT_SECRET as string;
   const { authorization: token, id } = req.headers;

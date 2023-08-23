@@ -7,16 +7,11 @@ const logger = getLogger();
 const prisma = new PrismaClient();
 
 export const getAllPosts = async (
-  userId: string,
   offset: number,
+  userId?: string
 ): Promise<{ posts: PostType[] }> => {
-  // Assuming that userId is valid (checked by verifyToken) and offset >= 0
-  const posts = await prisma.post.findMany({
-    where: {
-      NOT: {
-        authorId: userId,
-      },
-    },
+  // Assuming that userId is valid (checked by verifySession) and offset >= 0
+  const defaultOptions: any = {
     skip: offset,
     take: 25,
     select: {
@@ -79,9 +74,20 @@ export const getAllPosts = async (
         },
       },
     },
-  });
+  };
+  const option = userId
+    ? {
+        where: {
+          NOT: {
+            authorId: userId,
+          },
+        },
+        ...defaultOptions,
+      }
+    : defaultOptions;
+  const posts = await prisma.post.findMany(option);
   logger.info(
-    `Posts returned with offset ${offset} and total of ${posts.length} element(s).`,
+    `Posts returned with offset ${offset} and total of ${posts.length} element(s).`
   );
   return {
     posts,
@@ -93,7 +99,7 @@ export const createNewPost = async (
   message: string,
   images: string[],
   anonymous: boolean,
-  themeId: string,
+  themeId: string
 ): Promise<PostType> => {
   // Assuming that id is valid and other arguments is in a valid type
   // Check if themeId exists
@@ -126,7 +132,16 @@ export const createNewPost = async (
     include: {
       author: true,
       theme: true,
-      comments: true,
+      comments: {
+        include: {
+          author: true,
+          replies: {
+            include: {
+              author: true,
+            },
+          },
+        },
+      },
     },
   });
   logger.info("New post created!");
@@ -161,22 +176,260 @@ export const createNewPost = async (
         anonymous: r.anonymous,
         likes: r.likes,
         author: {
-          userId: newPost.author.userId,
-          username: newPost.author.username,
-          email: newPost.author.email,
-          password: newPost.author.password,
-          description: newPost.author.description,
-          profilePicture: newPost.author.profilePicture,
+          userId: r.author.userId,
+          username: r.author.username,
+          email: r.author.email,
+          password: r.author.password,
+          description: r.author.description,
+          profilePicture: r.author.profilePicture,
         },
       })),
       author: {
-        userId: newPost.author.userId,
-        username: newPost.author.username,
-        email: newPost.author.email,
-        password: newPost.author.password,
-        description: newPost.author.description,
-        profilePicture: newPost.author.profilePicture,
+        userId: c.userId,
+        username: c.username,
+        email: c.email,
+        password: c.password,
+        description: c.description,
+        profilePicture: c.profilePicture,
       },
     })),
   };
+};
+
+export const getPost = async (postId: string): Promise<PostType> => {
+  // Check if postId exists
+  const post = await prisma.post.findFirst({
+    where: { postId },
+    include: {
+      author: true,
+      theme: true,
+      comments: {
+        include: {
+          author: true,
+          replies: {
+            include: {
+              author: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!post) {
+    logger.info(`Post with the given postId ${postId} doesn't exists`);
+    throw HttpError(400, `Post with postId ${postId} doesn't exist`);
+  }
+  logger.info(`Post with postId ${postId} found.`);
+  return {
+    postId: post.postId,
+    message: post.message,
+    images: post.images,
+    anonymous: post.anonymous,
+    likes: post.likes,
+    theme: {
+      themeId: post.theme.themeId,
+      name: post.theme.name,
+    },
+    author: {
+      userId: post.author.userId,
+      username: post.author.username,
+      email: post.author.email,
+      password: post.author.password,
+      description: post.author.description,
+      profilePicture: post.author.profilePicture,
+    },
+    comments: post.comments.map((c: any) => ({
+      commentId: c.commentId,
+      message: c.message,
+      images: c.images,
+      anonymous: c.anonymous,
+      likes: c.likes,
+      replies: c.replies.map((r: any) => ({
+        replyId: r.replyId,
+        message: r.message,
+        images: r.images,
+        anonymous: r.anonymous,
+        likes: r.likes,
+        author: {
+          userId: r.author.userId,
+          username: r.author.username,
+          email: r.author.email,
+          password: r.author.password,
+          description: r.author.description,
+          profilePicture: r.author.profilePicture,
+        },
+      })),
+      author: {
+        userId: c.author.userId,
+        username: c.author.username,
+        email: c.author.email,
+        password: c.author.password,
+        description: c.author.description,
+        profilePicture: c.author.profilePicture,
+      },
+    })),
+  };
+};
+
+export const updatePost = async (
+  userId: string,
+  postId: string,
+  message: string,
+  images: string[],
+  anonymous: boolean,
+  themeId: string
+): Promise<PostType> => {
+  // Check if userId owns postId or post exists
+  const postExists = await prisma.post.findFirst({
+    where: {
+      postId,
+      authorId: userId,
+    },
+  });
+  if (!postExists) {
+    logger.info("Post either doesn't belong to the user or doesn't exist");
+    throw HttpError(400, "Post cannot be found.");
+  }
+  // Update post
+  const updatedPost = await prisma.post.update({
+    where: {
+      postId,
+    },
+    data: {
+      message,
+      images,
+      anonymous,
+      theme: {
+        connect: {
+          themeId,
+        },
+      },
+    },
+    include: {
+      author: true,
+      theme: true,
+      comments: {
+        include: {
+          author: true,
+          replies: {
+            include: {
+              author: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  logger.info(`Post with ${postId} successfully updated`);
+  return {
+    postId: updatedPost.postId,
+    message: updatedPost.message,
+    images: updatedPost.images,
+    anonymous: updatedPost.anonymous,
+    likes: updatedPost.likes,
+    theme: {
+      themeId: updatedPost.theme.themeId,
+      name: updatedPost.theme.name,
+    },
+    author: {
+      userId: updatedPost.author.userId,
+      username: updatedPost.author.username,
+      email: updatedPost.author.email,
+      password: updatedPost.author.password,
+      description: updatedPost.author.description,
+      profilePicture: updatedPost.author.profilePicture,
+    },
+    comments: updatedPost.comments.map((c: any) => ({
+      commentId: c.commentId,
+      message: c.message,
+      images: c.images,
+      anonymous: c.anonymous,
+      likes: c.likes,
+      replies: c.replies.map((r: any) => ({
+        replyId: r.replyId,
+        message: r.message,
+        images: r.images,
+        anonymous: r.anonymous,
+        likes: r.likes,
+        author: {
+          userId: r.author.userId,
+          username: r.author.username,
+          email: r.author.email,
+          password: r.author.password,
+          description: r.author.description,
+          profilePicture: r.author.profilePicture,
+        },
+      })),
+      author: {
+        userId: c.author.userId,
+        username: c.author.username,
+        email: c.author.email,
+        password: c.author.password,
+        description: c.author.description,
+        profilePicture: c.author.profilePicture,
+      },
+    })),
+  };
+};
+
+export const deletePost = async (
+  userId: string,
+  postId: string
+): Promise<object> => {
+  // Check if userId owns postId or post exists
+  const postExists = await prisma.post.findFirst({
+    where: {
+      postId,
+      authorId: userId,
+    },
+  });
+  if (!postExists) {
+    logger.info("Post either doesn't belong to the user or doesn't exist");
+    throw HttpError(400, "Post cannot be found.");
+  }
+  // Delete post
+  await prisma.post.delete({
+    where: {
+      postId,
+    },
+  });
+  logger.info(`Post ${postId} successfully deleted.`);
+  return {};
+};
+
+export const likePost = async (
+  userId: string,
+  postId: string,
+  like: boolean
+): Promise<object> => {
+  // Assuming userId is valid (checked by verifySession)
+  // Check if postId is valid
+  const post = await prisma.post.findFirst({
+    where: {
+      postId,
+    },
+  });
+  if (!post) {
+    logger.info(`Post with postId ${postId} doesn't exists.`);
+    throw HttpError(400, `Post with postId ${postId} doesn't exists.`);
+  }
+  let newLikes = [...post.likes];
+  newLikes = like
+    ? newLikes.includes(userId)
+      ? newLikes
+      : [...newLikes, userId]
+    : newLikes.filter((l: string) => l !== userId);
+  // Update database
+  await prisma.post.update({
+    where: {
+      postId,
+    },
+    data: {
+      likes: newLikes,
+    },
+  });
+  logger.info(
+    `Post with postId ${postId} successfully ${like ? "liked" : "unliked"}`
+  );
+  return {};
 };

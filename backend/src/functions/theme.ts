@@ -13,7 +13,7 @@ export const getAllThemes = async (): Promise<{ themes: ThemeType }> => {
     },
   });
   logger.info(
-    `All themes retrieved with total of ${themes.length} element(s).`,
+    `All themes retrieved with total of ${themes.length} element(s).`
   );
   return { themes };
 };

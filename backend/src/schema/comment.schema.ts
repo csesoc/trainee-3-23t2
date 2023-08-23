@@ -13,3 +13,13 @@ export const CommentSchema: ZodSchema = z.object({
 });
 
 export type CommentType = z.infer<typeof CommentSchema>;
+
+export const PostCommentSchema = z.object({
+  message: z.string(),
+  images: z.array(z.string()),
+  anonymous: z.boolean(),
+});
+
+export const LikeCommentSchema = z.object({
+  like: z.boolean(),
+});

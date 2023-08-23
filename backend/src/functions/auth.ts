@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 export const registerUser = async (
   username: string,
   email: string,
-  password: string,
+  password: string
 ): Promise<{ token: string; expiredBy: Date; userId: string }> => {
   // Check if email or password is valid
   if (!validator.isEmail(email) || !username || !password) {
@@ -73,7 +73,7 @@ export const registerUser = async (
 
 export const loginUser = async (
   username: string,
-  password: string,
+  password: string
 ): Promise<{ token: string; expiredBy: Date; userId: string }> => {
   // Check if email or password is valid
   if (!username || !password) {
