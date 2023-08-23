@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 export const validateRequest = (
   schema: ZodSchema,
-  property: "body" | "query"
+  property: "body" | "query",
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req[property]);
@@ -28,30 +28,36 @@ export const validateRequest = (
 export const verifyToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const secret = process.env.JWT_SECRET as string;
-  const { authorization: token, userid } = req.headers;
+  const { authorization: token, id } = req.headers;
 
-  if (!token || !(token as string).startsWith("Bearer") || !userid) {
+  if (!token || !(token as string).startsWith("Bearer") || !id) {
     return res.status(401).json({
       error: "Unauthorised",
     });
   }
 
   const cleanedToken = token.split(" ")[1];
+  const tokenExists = await prisma.token.findFirst({
+    where: {
+      token: getHash(cleanedToken as string),
+    },
+  });
   try {
     jwt.verify(cleanedToken as string, secret);
-    const tokenExists = await prisma.token.findFirst({
-      where: {
-        token: getHash(cleanedToken as string),
-      },
-    });
-    if (!tokenExists || tokenExists.userId !== userid) {
+    if (!tokenExists || tokenExists.userId !== id) {
       return res.status(401).json({ message: "Invalid Token" });
     }
   } catch (err: any) {
     if (err.name === "TokenExpiredError") {
+      if (tokenExists)
+        await prisma.token.delete({
+          where: {
+            token: getHash(cleanedToken as string),
+          },
+        });
       return res.status(401).json({ message: "Expired token" });
     }
     return res.status(401).json({ message: "Invalid Token" });

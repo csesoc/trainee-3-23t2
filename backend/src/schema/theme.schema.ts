@@ -1,5 +1,4 @@
 import { ZodSchema, z } from "zod";
-import { PostSchema } from "./post.schema";
 
 export const ThemeSchema: ZodSchema = z.object({
   themeId: z.string(),

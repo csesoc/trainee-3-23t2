@@ -11,8 +11,8 @@ const prisma = new PrismaClient();
 export const registerUser = async (
   username: string,
   email: string,
-  password: string
-) => {
+  password: string,
+): Promise<{ token: string; expiredBy: Date; userId: string }> => {
   // Check if email or password is valid
   if (!validator.isEmail(email) || !username || !password) {
     logger.info("Data provided is of invalid format");
@@ -66,11 +66,15 @@ export const registerUser = async (
 
   return {
     token: `Bearer ${newGeneratedToken}`,
+    expiredBy,
     userId: newUser.userId,
   };
 };
 
-export const loginUser = async (username: string, password: string) => {
+export const loginUser = async (
+  username: string,
+  password: string,
+): Promise<{ token: string; expiredBy: Date; userId: string }> => {
   // Check if email or password is valid
   if (!username || !password) {
     logger.info("Data provided is of invalid format");
@@ -104,11 +108,12 @@ export const loginUser = async (username: string, password: string) => {
 
   return {
     token: `Bearer ${newGeneratedToken}`,
+    expiredBy,
     userId: user.userId,
   };
 };
 
-export const logoutUser = async (token: string) => {
+export const logoutUser = async (token: string): Promise<object> => {
   // Assuming that token and userId already verified
   // Delete token immediately
   await prisma.token.delete({
@@ -116,5 +121,6 @@ export const logoutUser = async (token: string) => {
       token: getHash(token),
     },
   });
+  logger.info(`Token ${token} deleted.`);
   return {};
 };

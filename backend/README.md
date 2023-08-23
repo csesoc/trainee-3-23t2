@@ -8,11 +8,14 @@
 
 ## Routes
 
-| Route          | Method |                                Input                                |                                    Output |
-| :------------- | :----: | :-----------------------------------------------------------------: | ----------------------------------------: |
-| /auth/register |  POST  | Request Body: { username: string, email: string, password: string } | Return: { token: string, userId: string } |
-| /auth/login    |  POST  |        Request Body: { username: string, password: string }         | Return: { token: string, userId: string } |
-| /auth/logout   | DELETE |     Request Headers: { Authorization: string, userId: string }      |                                Return: {} |
+| Route          | Method |                                                                       Input                                                                       |                                                                    Output |
+| :------------- | :----: | :-----------------------------------------------------------------------------------------------------------------------------------------------: | ------------------------------------------------------------------------: |
+| /auth/register |  POST  |                                        Request Body: { username: string, email: string, password: string }                                        |                                 Return: { token: string, userId: string } |
+| /auth/login    |  POST  |                                               Request Body: { username: string, password: string }                                                |                                 Return: { token: string, userId: string } |
+| /auth/logout   |  POST  |                                              Request Headers: { Authorization: string, id: string }                                               |                                                                Return: {} |
+| /posts         |  GET   |                             Request Headers: { Authorization: string, id: string }, Request Query: { offset: number }                             |     Return: { posts: **Post**[] } - refer to PostSchema in post.schema.ts |
+| /post          |  POST  | Request Headers: { Authorization: string, id: string }, Request Body: { message: string, images: string[], anonymous: boolean, themeId: string, } |                  Return: **Post** - refer to PostSchema in post.schema.ts |
+| /themes        |  GET   |                                                                         -                                                                         | Return: { themes: **Theme**[] } - refer to ThemeSchema in theme.schema.ts |
 
 ## Tools and Frameworks
 
