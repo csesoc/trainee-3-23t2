@@ -1,12 +1,40 @@
-#left {
-    float: left;
+#rose {
+    width: 65%;
+    height: 165%;
+    top: -42%;
+    position: relative;
 }
 
 #right {
-    width: 50%;
+    width: 30%;
+    height: 100%;
     float: right;
+    position: absolute;
+    top: 30%;
+    right: 0%;
 }
+
+html, body {margin: 0; height: 100%; overflow: hidden}
 
 h1 {
     text-align: left;
+}
+
+label {
+    text-align: center;
+}
+
+input {
+    text-align: center;
+    width: 70%;
+    height: 4%;
+}
+
+button {
+    width: 72%;
+    height: 4%;
+}
+
+#forgo {
+    text-align: center;
 }
