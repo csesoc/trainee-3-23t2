@@ -518,6 +518,6 @@ app.delete(
 app.use(errorHandler());
 
 // SERVER
-app.listen(3030, () => {
+app.listen(process.env.PORT ?? 3030, () => {
   logger.info("Server starting");
 });
