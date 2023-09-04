@@ -9,10 +9,15 @@ import {
   PhotoIcon,
 } from "@heroicons/react/24/outline";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { get } from "@/util/request";
+import { get, post } from "@/util/request";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Spinner from "@/components/Spinner";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 
 export default function MakeAPost() {
-  const [enabled, setEnabled] = useState(false);
+  const router = useRouter();
+  const [anonymous, setAnonymous] = useState(false);
   const [themes, setThemes] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState<{
     themeId: string;
@@ -21,14 +26,29 @@ export default function MakeAPost() {
     textColor: string;
     image: string;
   }>();
-  const [description, setDescription] = useState("");
+  const [message, setMessage] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const textAreaRef = useRef<HTMLInputElement>(null);
+  const { data: session } = useSession();
+  const [afterLoading, setAfterLoading] = useState("");
+
+  if (!session) {
+    throw new Error("Unauthorised");
+  }
+
+  const user = session.user as {
+    authorization: string;
+    id: string;
+    profilePicture: string;
+    username: string;
+  };
 
   // Indicate form ready to submit
   const readyToSubmit = useMemo(
-    () => description.length > 0 && description.length <= 500,
-    [description]
+    () => message.length > 0 && message.length <= 500 && images.length <= 5,
+    [message, images]
   );
 
   // Display all images uploaded
@@ -57,7 +77,11 @@ export default function MakeAPost() {
 
       textAreaRef.current.files = dt.files;
     }
-    setImages((prev: string[]) => [...prev].splice(index, 1));
+    setImages((prev: string[]) => {
+      const newArr = [...prev];
+      newArr.splice(index, 1);
+      return newArr;
+    });
   };
 
   // Get All Themes
@@ -70,8 +94,44 @@ export default function MakeAPost() {
     getAllThemes();
   }, []);
 
-  // TODO: CALL BACKEND HERE TO CREATE POST ALONG WITH HEADERS (FROM EVAN)
-  const handleOnSubmit = (e: FormEvent) => {};
+  const handleOnSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!session || !session.user || afterLoading || loading) return;
+    setLoading(true);
+    const { authorization, id } = session.user as {
+      authorization: string;
+      id: string;
+    };
+    const res = await post(
+      "/post",
+      {
+        message,
+        images,
+        anonymous,
+        themeId: selectedTheme?.themeId,
+      },
+      {
+        authorization,
+        id,
+      }
+    );
+    setLoading(false);
+    setAfterLoading("Post created");
+    if (res.errorCode) {
+      setError(res.errorMessage);
+      return;
+    }
+    setError("");
+    router.refresh();
+  };
+
+  useEffect(() => {
+    if (!afterLoading) return;
+    const timeout = setTimeout(() => {
+      setAfterLoading("");
+    }, 3000);
+    return () => clearTimeout(timeout);
+  }, [afterLoading]);
 
   return (
     <div className="flex flex-col min-h-screen gap-8 py-12 px-8 md:px-16">
@@ -95,27 +155,27 @@ export default function MakeAPost() {
             {/* Profile Picture */}
             <div className="flex gap-4 items-center">
               <Image
-                src=""
+                src={user.profilePicture}
                 alt="Profile Picture"
                 width={32}
                 height={32}
                 className="rounded-full"
               />
-              <span className="font-semibold">Username</span>
+              <span className="font-semibold">{user.username}</span>
             </div>
             {/* Text area */}
             <div className="flex-grow">
-              <label htmlFor="make-a-post-description" className="sr-only">
+              <label htmlFor="make-a-post-message" className="sr-only">
                 Insert Description
               </label>
               <textarea
-                name="description"
-                id="make-a-post-description"
-                value={description}
+                name="message"
+                id="make-a-post-message"
+                value={message}
                 onChange={(e: FormEvent<HTMLTextAreaElement>) =>
-                  setDescription((e.target as HTMLTextAreaElement).value)
+                  setMessage((e.target as HTMLTextAreaElement).value)
                 }
-                placeholder="Insert description..."
+                placeholder="Insert message..."
                 className="resize-none outline-none h-full w-full bg-transparent"
               />
             </div>
@@ -134,7 +194,6 @@ export default function MakeAPost() {
                   type="file"
                   accept="image/png, image/jpeg"
                   multiple
-                  maxLength={10}
                   className="hidden"
                   ref={textAreaRef}
                   onChange={(e: FormEvent<HTMLInputElement>) =>
@@ -144,8 +203,8 @@ export default function MakeAPost() {
               </div>
               <div>
                 <span className="text-sm text-gray-500">
-                  {500 - description.length} characters left. Min 1 character.
-                  Max 500 characters.{" "}
+                  {500 - message.length} characters left. Min 1 character. Max
+                  500 characters.{" "}
                 </span>
               </div>
             </div>
@@ -159,7 +218,7 @@ export default function MakeAPost() {
                       src={img}
                       width={96}
                       height={96}
-                      className="border-2 border-black/25 p-2 rounded-lg cursor-pointer"
+                      className="border-2 border-black/25 p-2 rounded-lg object-contain cursor-pointer"
                       onClick={() => deleteImage(index)}
                     />
                   ))}
@@ -178,7 +237,7 @@ export default function MakeAPost() {
           {/* Display as anonymous */}
           <div className="flex gap-4 items-center">
             <span className="font-bold">Display as Anonymous?</span>
-            <BinarySwitch enabled={enabled} setEnabled={setEnabled} />
+            <BinarySwitch enabled={anonymous} setEnabled={setAnonymous} />
           </div>
         </div>
         {/* Right side */}
@@ -212,7 +271,6 @@ export default function MakeAPost() {
                       <div className="h-6 w-6 border-2 border-black/25 rounded-full"></div>
                     )}
                   </div>
-                  {/* TODO: Change to Kris's post card component */}
                   <div
                     style={{
                       backgroundColor: t.backgroundColor,
@@ -223,13 +281,13 @@ export default function MakeAPost() {
                     {/* Profile */}
                     <div className="flex gap-4 items-center">
                       <Image
-                        src=""
+                        src={user.profilePicture}
                         alt="Profile Picture"
                         width={32}
                         height={32}
                         className="rounded-full"
                       />
-                      <span className="font-semibold">Username</span>
+                      <span className="font-semibold">{user.username}</span>
                     </div>
                     <p className="line-clamp-3 h-[3ch] text-black/50 break-all">
                       Description here...
@@ -254,16 +312,29 @@ export default function MakeAPost() {
         </div>
       </div>
       <button
-        className={`px-8 py-3 ml-auto block text-white font-bold rounded-lg ${
-          !readyToSubmit
-            ? "bg-ll-dark-pink/50 cursor-not-allowed"
+        className={`px-8 py-3 ml-auto block text-white font-bold rounded-lg transition-all duration-150 ${
+          !readyToSubmit || !session || !session.user || afterLoading || loading
+            ? afterLoading
+              ? "bg-green-500 cursor-not-allowed"
+              : "bg-ll-dark-pink/50 cursor-not-allowed"
             : "bg-ll-dark-pink cursor-pointer"
         }`}
         type="submit"
         form="make-a-post"
         disabled={!readyToSubmit}
       >
-        Create Post
+        {!loading ? (
+          afterLoading ? (
+            <div className="flex gap-2 items-center">
+              <CheckBadgeIcon className="w-4 h-4" />
+              <p>{afterLoading}</p>
+            </div>
+          ) : (
+            "Create Post"
+          )
+        ) : (
+          <Spinner />
+        )}
       </button>
     </div>
   );

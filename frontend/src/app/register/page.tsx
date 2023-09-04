@@ -97,7 +97,7 @@ export default function Register() {
             <div className="space-y-2">
               <label className="block">Password</label>
               <input
-                type="text"
+                type="password"
                 className="w-full px-4 py-2 outline-none rounded-md bg-gray-100"
                 name="password"
                 placeholder="Please enter your password!"
@@ -113,7 +113,7 @@ export default function Register() {
             <div className="space-y-2">
               <label className="block">Confirm Password</label>
               <input
-                type="text"
+                type="password"
                 className="w-full px-4 py-2 outline-none rounded-md bg-gray-100"
                 name="confirm-password"
                 placeholder="Please enter again your password!"

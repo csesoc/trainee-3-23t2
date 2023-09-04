@@ -1,14 +1,7 @@
 "use client";
 
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  FormEvent,
-  Fragment,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { FormEvent, Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import {
   PhotoIcon,
@@ -36,6 +29,13 @@ export default function ReplyModal({
   const textAreaRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
   const { data: session } = useSession();
+
+  const user = session?.user as {
+    authorization: string;
+    id: string;
+    username: string;
+    profilePicture: string;
+  };
 
   function closeModal() {
     setIsOpen(false);
@@ -171,13 +171,13 @@ export default function ReplyModal({
                         {/* Profile Picture */}
                         <div className="flex gap-4 items-center">
                           <Image
-                            src=""
+                            src={user.profilePicture}
                             alt="Profile Picture"
                             width={32}
                             height={32}
                             className="rounded-full"
                           />
-                          <span className="font-semibold">Username</span>
+                          <span className="font-semibold">{user.username}</span>
                         </div>
                         {/* Text area */}
                         <div className="flex-grow">

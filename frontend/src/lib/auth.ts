@@ -1,4 +1,4 @@
-import { post } from "@/util/request";
+import { post, get } from "@/util/request";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -24,7 +24,16 @@ export const options: NextAuthOptions = {
         if (res.errorCode) {
           return null;
         }
-        return res;
+        const user = await get(`/user/${res.userId}`, {}, {
+          authorization: res.token,
+          id: res.userId
+        });
+        return {
+          token: res.token,
+          id: user.userId,
+          username: user.username,
+          profilePicture: user.profilePicture
+        };
       },
     }),
   ],
@@ -36,7 +45,9 @@ export const options: NextAuthOptions = {
           user: {
             ...session.user,
             id: token.id,
-            authorization: token.token
+            authorization: token.token,
+            username: token.username,
+            profilePicture: token.profilePicture
           }
         };
       }
@@ -47,8 +58,10 @@ export const options: NextAuthOptions = {
         const userData = user as any;
         return {
           ...token,
-          id: userData.userId,
-          token: userData.token
+          id: userData.id,
+          token: userData.token,
+          username: userData.username,
+          profilePicture: userData.profilePicture
         }
       }
       return token;
