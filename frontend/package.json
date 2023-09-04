@@ -9,10 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-<<<<<<< HEAD
-=======
     "@headlessui/react": "^1.7.17",
->>>>>>> 0a68ee733ae73fdbb2fe06e70f165174ffea2d85
     "@heroicons/react": "^2.0.18",
     "@types/node": "20.5.1",
     "@types/react": "^18.2.20",
