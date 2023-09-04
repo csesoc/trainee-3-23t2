@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { ArrowLongLeftIcon } from "@heroicons/react/24/solid";
 

@@ -2,6 +2,9 @@
 CREATE TABLE "Theme" (
     "theme_id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "name" TEXT NOT NULL,
+    "backgroundColor" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
+    "textColor" TEXT NOT NULL,
 
     CONSTRAINT "pk_theme_id" PRIMARY KEY ("theme_id")
 );
