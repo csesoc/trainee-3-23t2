@@ -9,8 +9,7 @@ import {
   PhotoIcon,
 } from "@heroicons/react/24/outline";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { request } from "@/utils/request";
-import { v4 as uuidv4 } from "uuid";
+import { get } from "@/util/request";
 
 export default function MakeAPost() {
   const [enabled, setEnabled] = useState(false);
@@ -64,14 +63,14 @@ export default function MakeAPost() {
   // Get All Themes
   useEffect(() => {
     const getAllThemes = async () => {
-      const { themes } = await request("/themes", "GET");
+      const { themes } = await get("/themes");
       setSelectedTheme(themes[0]);
       setThemes(themes);
     };
     getAllThemes();
   }, []);
 
-  // TODO: CALL BACKEND HERE TO CREATE POST
+  // TODO: CALL BACKEND HERE TO CREATE POST ALONG WITH HEADERS (FROM EVAN)
   const handleOnSubmit = (e: FormEvent) => {};
 
   return (
