@@ -24,6 +24,9 @@ export const getAllPosts = async (
         select: {
           themeId: true,
           name: true,
+          textColor: true,
+          backgroundColor: true,
+          image: true,
         },
       },
       author: {
@@ -152,6 +155,9 @@ export const createNewPost = async (
     theme: {
       themeId: newPost.theme.themeId,
       name: newPost.theme.name,
+      image: newPost.theme.image,
+      backgroundColor: newPost.theme.backgroundColor,
+      textColor: newPost.theme.textColor,
     },
     author: {
       userId: newPost.author.userId,
@@ -224,6 +230,9 @@ export const getPost = async (postId: string): Promise<PostType> => {
     theme: {
       themeId: post.theme.themeId,
       name: post.theme.name,
+      image: post.theme.image,
+      backgroundColor: post.theme.backgroundColor,
+      textColor: post.theme.textColor,
     },
     author: {
       userId: post.author.userId,
@@ -322,6 +331,9 @@ export const updatePost = async (
     theme: {
       themeId: updatedPost.theme.themeId,
       name: updatedPost.theme.name,
+      image: updatedPost.theme.image,
+      backgroundColor: updatedPost.theme.backgroundColor,
+      textColor: updatedPost.theme.textColor,
     },
     author: {
       userId: updatedPost.author.userId,

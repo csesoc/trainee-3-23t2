@@ -1,3 +1,11 @@
+"use client";
+
+import { useSession } from "next-auth/react";
+
+export default function Home() {
+  const session = useSession();
+  return <main>Session: {JSON.stringify(session)}</main>;
+}
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 

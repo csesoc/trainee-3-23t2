@@ -1,12 +1,67 @@
-#left {
-    float: left;
+#rose {
+    width: 65%;
+    height: 180%;
+    top: -42%;
+    position: relative;
 }
 
 #right {
-    width: 50%;
+    width: 30%;
+    height: 100%;
     float: right;
+    position: absolute;
+    top: 20%;
+    right: 0%;
 }
+
+#title1 {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 250%;
+    height: 10%;
+}
+
+#title2 {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    height: 5%;
+}
+
+#inputs {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 10px;
+}
+
+#line {
+    display: inline-block;
+    border-top: 1px solid grey;
+    width: 80%;
+}
+
+#forgo {
+    text-align: center;
+    display: inline;
+}
+
+html, body {margin: 0; height: 100%; overflow: hidden}
 
 h1 {
     text-align: left;
+}
+
+label {
+    text-align: center;
+}
+
+input {
+    text-align: center;
+    width: 80%;
+    height: 4%;
+}
+
+button {
+    width: 83%;
+    height: 4%;
+    background-color:#0894fc;
+    color:white;
+    border-radius: 8px;
+    border: none;
 }
