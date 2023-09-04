@@ -1,7 +1,7 @@
-import getLogger from "src/utils/logger";
+import getLogger from "../utils/logger";
 import { PrismaClient } from "@prisma/client";
 import HttpError from "http-errors";
-import { CommentType } from "src/schema/comment.schema";
+import { CommentType } from "../schema/comment.schema";
 
 const logger = getLogger();
 const prisma = new PrismaClient();

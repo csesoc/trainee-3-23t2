@@ -1,4 +1,4 @@
-import getLogger from "src/utils/logger";
+import getLogger from "./utils/logger";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import errorHandler from "middleware-http-errors";

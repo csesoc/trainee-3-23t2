@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { ThemeType } from "src/schema/theme.schema";
-import getLogger from "src/utils/logger";
+import { ThemeType } from "../schema/theme.schema";
+import getLogger from "../utils/logger";
 
 const logger = getLogger();
 const prisma = new PrismaClient();
