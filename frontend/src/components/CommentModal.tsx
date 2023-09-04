@@ -9,6 +9,7 @@ import BinarySwitch from "./BinarySwitch";
 import { post } from "@/util/request";
 import { useRouter } from "next/navigation";
 import Spinner from "./Spinner";
+import { useSession } from "next-auth/react";
 
 export default function CommentModal({ postId }: { postId: string }) {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function CommentModal({ postId }: { postId: string }) {
   const [loading, setLoading] = useState(false);
   const textAreaRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
+  const { data: session } = useSession();
 
   function closeModal() {
     setIsOpen(false);
@@ -70,8 +72,12 @@ export default function CommentModal({ postId }: { postId: string }) {
   // TODO: CALL BACKEND HERE TO CREATE POST ALONG WITH HEADERS (FROM EVAN)
   const handleOnSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!session || !session.user) return;
     setLoading(true);
-    // TODO: AUTHORIZATION AND ID FROM SESSION
+    const { authorization, id } = session.user as {
+      authorization: string;
+      id: string;
+    };
     const res = await post(
       `/comment/${postId}`,
       {
@@ -80,9 +86,8 @@ export default function CommentModal({ postId }: { postId: string }) {
         anonymous,
       },
       {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmMDY3N2QxZi1mNWM0LTQ1Y2MtYTMwMC0wY2ZhZTFjNjFkMjIiLCJpYXQiOjE2OTM4MTc2MDcsImV4cCI6MTY5MzkwNDAwN30.BpAC03yLfHuUVGcu-naS9Zn-5KC6ye4jHMF_-uXseD0",
-        id: "f0677d1f-f5c4-45cc-a300-0cfae1c61d22",
+        authorization,
+        id,
       }
     );
     setLoading(false);
@@ -132,122 +137,129 @@ export default function CommentModal({ postId }: { postId: string }) {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all space-y-4">
-                  <Dialog.Title
-                    as="p"
-                    className="text-lg font-semibold leading-6 text-gray-900"
-                  >
-                    Add new comment
-                  </Dialog.Title>
-                  {error && <p className="text-red-500">{error}</p>}
-                  {/* Post Section */}
-                  <form
-                    className="flex flex-col gap-y-4 rounded-lg"
-                    name="make-a-comment"
-                    id="make-a-comment"
-                    onSubmit={handleOnSubmit}
-                  >
-                    {/* Profile Picture */}
-                    <div className="flex gap-4 items-center">
-                      <Image
-                        src=""
-                        alt="Profile Picture"
-                        width={32}
-                        height={32}
-                        className="rounded-full"
-                      />
-                      <span className="font-semibold">Username</span>
-                    </div>
-                    {/* Text area */}
-                    <div className="flex-grow">
-                      <label
-                        htmlFor="make-a-comment-message"
-                        className="sr-only"
+                  {!session ? (
+                    <p>You need to login to use this feature.</p>
+                  ) : (
+                    <>
+                      <Dialog.Title
+                        as="p"
+                        className="text-lg font-semibold leading-6 text-gray-900"
                       >
-                        Insert message
-                      </label>
-                      <textarea
-                        name="message"
-                        id="make-a-comment-message"
-                        value={message}
-                        onChange={(e: FormEvent<HTMLTextAreaElement>) =>
-                          setMessage((e.target as HTMLTextAreaElement).value)
-                        }
-                        placeholder="Insert message..."
-                        className="resize-none outline-none h-full w-full bg-transparent"
-                      />
-                    </div>
-                    {/* Insert Images */}
-                    <div className="flex justify-between items-center gap-4 flex-wrap">
-                      <div>
-                        <label
-                          className="cursor-pointer"
-                          htmlFor="make-a-comment-images"
-                        >
-                          <div className="flex gap-4 items-center">
-                            <PhotoIcon className="w-6 h-6" />
-                            <span className="font-bold">Insert Images</span>
-                          </div>
-                        </label>
-                        <input
-                          id="make-a-comment-images"
-                          name="files"
-                          type="file"
-                          accept="image/png, image/jpeg, image/gif"
-                          multiple
-                          className="hidden"
-                          ref={textAreaRef}
-                          onChange={(e: FormEvent<HTMLInputElement>) =>
-                            updateImages(e.target as HTMLInputElement)
-                          }
-                        ></input>
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-500">
-                          {500 - message.length} characters left. Min 1
-                          character. Max 500 characters and 5 images.{" "}
-                        </span>
-                      </div>
-                    </div>
-                    {images.length !== 0 && (
-                      <>
-                        <span>Uploaded Images:</span>
-                        <div className="flex flex-wrap gap-2">
-                          {images.map((img: string, index: number) => (
-                            <Image
-                              alt={`Image ${index + 1}`}
-                              src={img}
-                              width={96}
-                              height={96}
-                              className="border-2 border-black/25 p-2 rounded-lg cursor-pointer object-contain"
-                              onClick={() => deleteImage(index)}
-                            />
-                          ))}
+                        Add new comment
+                      </Dialog.Title>
+                      {error && <p className="text-red-500">{error}</p>}
+                      {/* Post Section */}
+                      <form
+                        className="flex flex-col gap-y-4 rounded-lg"
+                        name="make-a-comment"
+                        id="make-a-comment"
+                        onSubmit={handleOnSubmit}
+                      >
+                        {/* Profile Picture */}
+                        <div className="flex gap-4 items-center">
+                          <Image
+                            src=""
+                            alt="Profile Picture"
+                            width={32}
+                            height={32}
+                            className="rounded-full"
+                          />
+                          <span className="font-semibold">Username</span>
                         </div>
-                      </>
-                    )}
-                  </form>
-                  {/* Display as anonymous */}
-                  <div className="flex gap-4 items-center">
-                    <span className="font-bold">Display as Anonymous?</span>
-                    <BinarySwitch
-                      enabled={anonymous}
-                      setEnabled={setAnonymous}
-                    />
-                  </div>
-                  {/* Submit button */}
-                  {/* TODO: CHANGE TO ACCENT COLOR */}
-                  <button
-                    className={`px-4 py-2 ml-auto block text-white font-bold rounded-lg transition-all duration-150 ${
-                      !readyToSubmit
-                        ? "bg-red-500/50 cursor-not-allowed"
-                        : "bg-red-500 cursor-pointer"
-                    }`}
-                    type="submit"
-                    form="make-a-comment"
-                    disabled={!readyToSubmit}
-                  >
-                    {!loading ? "Create Comment" : <Spinner />}
-                  </button>
+                        {/* Text area */}
+                        <div className="flex-grow">
+                          <label
+                            htmlFor="make-a-comment-message"
+                            className="sr-only"
+                          >
+                            Insert message
+                          </label>
+                          <textarea
+                            name="message"
+                            id="make-a-comment-message"
+                            value={message}
+                            onChange={(e: FormEvent<HTMLTextAreaElement>) =>
+                              setMessage(
+                                (e.target as HTMLTextAreaElement).value
+                              )
+                            }
+                            placeholder="Insert message..."
+                            className="resize-none outline-none h-full w-full bg-transparent"
+                          />
+                        </div>
+                        {/* Insert Images */}
+                        <div className="flex justify-between items-center gap-4 flex-wrap">
+                          <div>
+                            <label
+                              className="cursor-pointer"
+                              htmlFor="make-a-comment-images"
+                            >
+                              <div className="flex gap-4 items-center">
+                                <PhotoIcon className="w-6 h-6" />
+                                <span className="font-bold">Insert Images</span>
+                              </div>
+                            </label>
+                            <input
+                              id="make-a-comment-images"
+                              name="files"
+                              type="file"
+                              accept="image/png, image/jpeg, image/gif"
+                              multiple
+                              className="hidden"
+                              ref={textAreaRef}
+                              onChange={(e: FormEvent<HTMLInputElement>) =>
+                                updateImages(e.target as HTMLInputElement)
+                              }
+                            ></input>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-500">
+                              {500 - message.length} characters left. Min 1
+                              character. Max 500 characters and 5 images.{" "}
+                            </span>
+                          </div>
+                        </div>
+                        {images.length !== 0 && (
+                          <>
+                            <span>Uploaded Images:</span>
+                            <div className="flex flex-wrap gap-2">
+                              {images.map((img: string, index: number) => (
+                                <Image
+                                  alt={`Image ${index + 1}`}
+                                  src={img}
+                                  width={96}
+                                  height={96}
+                                  className="border-2 border-black/25 p-2 rounded-lg cursor-pointer object-contain"
+                                  onClick={() => deleteImage(index)}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </form>
+                      {/* Display as anonymous */}
+                      <div className="flex gap-4 items-center">
+                        <span className="font-bold">Display as Anonymous?</span>
+                        <BinarySwitch
+                          enabled={anonymous}
+                          setEnabled={setAnonymous}
+                        />
+                      </div>
+                      {/* Submit button */}
+                      <button
+                        className={`px-4 py-2 ml-auto block text-white font-bold rounded-lg transition-all duration-150 ${
+                          !readyToSubmit
+                            ? "bg-ll-dark-pink/50 cursor-not-allowed"
+                            : "bg-ll-dark-pink cursor-pointer"
+                        }`}
+                        type="submit"
+                        form="make-a-comment"
+                        disabled={!readyToSubmit}
+                      >
+                        {!loading ? "Create Comment" : <Spinner />}
+                      </button>
+                    </>
+                  )}
                 </Dialog.Panel>
               </Transition.Child>
             </div>
