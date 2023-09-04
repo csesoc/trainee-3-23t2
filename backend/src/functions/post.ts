@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { PostType } from "src/schema/post.schema";
-import getLogger from "src/utils/logger";
+import { PostType } from "../schema/post.schema";
+import getLogger from "../utils/logger";
 import HttpError from "http-errors";
 
 const logger = getLogger();

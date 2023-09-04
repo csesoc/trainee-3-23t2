@@ -1,8 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import getLogger from "src/utils/logger";
+import getLogger from "../utils/logger";
 import HttpError from "http-errors";
-import { UserType } from "src/schema/user.schema";
-import getHash from "src/utils/hash";
+import getHash from "../utils/hash";
 
 const logger = getLogger();
 const prisma = new PrismaClient();
