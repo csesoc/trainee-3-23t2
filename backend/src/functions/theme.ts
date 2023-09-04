@@ -10,7 +10,13 @@ export const getAllThemes = async (): Promise<{ themes: ThemeType }> => {
     select: {
       themeId: true,
       name: true,
+      textColor: true,
+      backgroundColor: true,
+      image: true
     },
+    orderBy: {
+      name: 'asc'
+    }
   });
   logger.info(
     `All themes retrieved with total of ${themes.length} element(s).`

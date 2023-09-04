@@ -8,9 +8,12 @@ datasource db {
 }
 
 model Theme {
-  themeId String @id(map: "pk_theme_id") @default(dbgenerated("gen_random_uuid()")) @map("theme_id")
-  name    String @unique
-  posts   Post[]
+  themeId         String @id(map: "pk_theme_id") @default(dbgenerated("gen_random_uuid()")) @map("theme_id")
+  name            String @unique
+  backgroundColor String
+  image           String
+  textColor       String
+  posts           Post[]
 }
 
 model User {
