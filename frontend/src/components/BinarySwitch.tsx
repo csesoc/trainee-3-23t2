@@ -20,7 +20,7 @@ export default function BinarySwitch({
           if (setEnabled) setEnabled(!currentlyEnabled);
           setCurrentlyEnabled(!currentlyEnabled);
         }}
-        className={`${currentlyEnabled ? "bg-accent" : "bg-gray-500"}
+        className={`${currentlyEnabled ? "bg-ll-dark-pink" : "bg-gray-500"}
           relative inline-flex h-[24px] w-[48px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
       >
         <span className="sr-only">Display as Anonymous?</span>

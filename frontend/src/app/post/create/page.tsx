@@ -196,7 +196,7 @@ export default function MakeAPost() {
                 <div
                   className={`border-2 rounded-lg p-4 cursor-pointer space-y-4 ${
                     selectedTheme && selectedTheme.themeId === t.themeId
-                      ? "border-accent shadow-lg shadow-accent/15"
+                      ? "border-ll-dark-pink shadow-lg shadow-ll-dark-pink/15"
                       : "border-black/25"
                   }`}
                   onClick={() => setSelectedTheme(t)}
@@ -205,8 +205,8 @@ export default function MakeAPost() {
                   <div className="flex flex-wrap-reverse justify-between gap-4">
                     <span className="font-bold capitalize">{t.name}</span>
                     {selectedTheme && selectedTheme.themeId === t.themeId ? (
-                      <div className="h-6 w-6 border-2 border-accent rounded-full relative">
-                        <div className="h-4 w-4 rounded-full bg-accent absolute top-[2px] left-[2px]"></div>
+                      <div className="h-6 w-6 border-2 border-ll-dark-pink rounded-full relative">
+                        <div className="h-4 w-4 rounded-full bg-ll-dark-pink absolute top-[2px] left-[2px]"></div>
                       </div>
                     ) : (
                       <div className="h-6 w-6 border-2 border-black/25 rounded-full"></div>
@@ -256,8 +256,8 @@ export default function MakeAPost() {
       <button
         className={`px-8 py-3 ml-auto block text-white font-bold rounded-lg ${
           !readyToSubmit
-            ? "bg-accent/50 cursor-not-allowed"
-            : "bg-accent cursor-pointer"
+            ? "bg-ll-dark-pink/50 cursor-not-allowed"
+            : "bg-ll-dark-pink cursor-pointer"
         }`}
         type="submit"
         form="make-a-post"
