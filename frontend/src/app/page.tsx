@@ -1,7 +1,10 @@
+
 // import Image from "next/image";
 import Divider from "@/components/heartDivider"
 import PostCard from "@/components/defaultPostCard"
 import { get, post } from "@/util/request";
+import { getServerSession } from "next-auth/next";
+import { options } from "@/lib/auth"
 
 // export is the dunction that makes it to the website?
 export default async function Home() {
@@ -17,6 +20,15 @@ export default async function Home() {
   // },
   // { message: "i cannnot believe this", images: [], anonymous: false, themeId:"3841fa45-0e54-401c-a31b-57676ee8f98c" }, 
   // ) 
+  let user = "Guest"
+  let userId = ""
+  // const session = useSession();
+  const session = await getServerSession(options)
+  if (session) {
+    user = session.user.username
+    userId = session.user.id
+    // console.log(session.user.username)
+  }
 
   let fetchedPosts = [];
   try {
@@ -28,14 +40,15 @@ export default async function Home() {
     fetchedPosts = [];
   }
 
-  console.log(fetchedPosts.length)
-  // console.log(fetchedPosts)
+  fetchedPosts = fetchedPosts.filter((post: any) => {
+    return userId != post.author.userId ? true : false
+  })
 
   return (
     <div className="flex flex-col gap-4 m-12">
       <div>
         <h3>Welcome,</h3>
-        <h2 className="font-bold custom-header">@Guest! </h2>
+        <h2 className="font-bold custom-header">@{user}! </h2>
       </div>
       <div>
         <Divider />
@@ -43,8 +56,6 @@ export default async function Home() {
       <div className="grid gap-6 grid-cols-[repeat(auto-fit,_minmax(220px,_1fr))]">
         {
           fetchedPosts.map((post: any) => {
-            console.log("hello")
-            console.log(post.message)
             return <PostCard 
                       msg={post.message} 
                       textColor={post.theme.textColor}
@@ -55,7 +66,8 @@ export default async function Home() {
                       comments={post.comments.length}
                       profile={post.author.profilePicture}
                       anonymous={post.anonymous}
-                      username={post.author.username}/>;
+                      username={post.author.username}
+                      id={post.postId}/>;
           })
         }
 
@@ -71,4 +83,12 @@ export default async function Home() {
     </div>
   )
 }
+// "use client";
 
+// import { useSession } from "next-auth/react";
+
+// export default function Home() {
+//   const session = useSession();
+//   return <main>Session: {JSON.stringify(session)}</main>;
+
+// }

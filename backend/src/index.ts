@@ -1,4 +1,4 @@
-import getLogger from "src/utils/logger";
+import getLogger from "./utils/logger";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import errorHandler from "middleware-http-errors";
@@ -54,7 +54,7 @@ const logger = getLogger();
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 // HEALTH CHECK
 app.get("/", (req: Request, res: Response) => {
@@ -518,6 +518,6 @@ app.delete(
 app.use(errorHandler());
 
 // SERVER
-app.listen(3030, () => {
+app.listen(process.env.PORT ?? 3030, () => {
   logger.info("Server starting");
 });

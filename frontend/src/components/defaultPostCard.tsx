@@ -1,6 +1,7 @@
 import { HandThumbUpIcon } from "@heroicons/react/24/outline"
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline"
 import Image from "next/image"
+import Link from 'next/link';
 
 type PostCardProps = {
     msg: string,
@@ -13,6 +14,7 @@ type PostCardProps = {
     profile: string,
     username: string,
     anonymous: boolean,
+    id: string,
 }
 
 const PostCard: React.FC<PostCardProps> = (props: PostCardProps) => {
@@ -23,7 +25,11 @@ const PostCard: React.FC<PostCardProps> = (props: PostCardProps) => {
     //     var shorten_msg = props.msg
     // }
     
+    const baseUrl = process.env.API_URL ?? "http://localhost:3000/post/";
+    const url = `${baseUrl}${props.id}`;
+
     return (
+        <Link href={url}>
         <div 
             style={{ 
                 backgroundColor: props.backgroundColor,
@@ -60,6 +66,7 @@ const PostCard: React.FC<PostCardProps> = (props: PostCardProps) => {
 
             </div>
         </div>
+        </Link>
     );
 };
 
