@@ -4,27 +4,6 @@ import React, { useState } from 'react'
 import { Bars3Icon } from "@heroicons/react/24/solid"
 import { SidebarData } from './SidebarData';
 import { Link } from 'react-router-dom';
-// export default function Sidebar() {
-//     return <p>Sidebar :D</p>;
-// }
-
-
-// export default function Sidebar() {
-//     return (
-//         <div className="container">
-//             <div className="flex flex-row h-4 space-x-3">
-//                 <HomeIcon className="text-ll-dark-pink"/>
-//                 <HomeIcon className="text-ll-dark-pink"/>
-//                 <HomeIcon className="text-ll-dark-pink"/>
-//                 {/* <div className="border-t border-gray-300 my-4"></div> */}
-//                 <hr className="w-11/12 h-0.5 border-0 rounded md:my-1.5 dark:bg-ll-dark-pink"/>
-//             </div>
-//             <p>
-//                 bruhasdasda
-//             </p>
-//         </div>
-//     );
-// }
 
 const Sidebar: React.FC = () => {
     const [isClosed, setClose] = useState(false);
@@ -39,7 +18,6 @@ const Sidebar: React.FC = () => {
                     className="flex flex-row text-2xl ml-8 text-white items-center cursor-pointer"
                 >
                     <Bars3Icon className="w-8 h-8 text-ll-dark-pink "/>
-                    {/* . bruh */}
                 </div>
 
                 <div 
