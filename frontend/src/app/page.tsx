@@ -10,11 +10,13 @@ export default async function Home() {
 
   // let token = login_res.token
   // let id = login_res.id
-  // await post("/post", { message: "i cannnot believe this", images: "", anonymous: false, themeId:"3841fa45-0e54-401c-a31b-57676ee8f98c" }, 
+  // await post("/post", 
   // {
-  //   "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmMDY3N2QxZi1mNWM0LTQ1Y2MtYTMwMC0wY2ZhZTFjNjFkMjIiLCJpYXQiOjE2OTM4MTc2MDcsImV4cCI6MTY5MzkwNDAwN30.BpAC03yLfHuUVGcu-naS9Zn-5KC6ye4jHMF_-uXseD0",
-  //   "id": "f0677d1f-f5c4-45cc-a300-0cfae1c61d22"
-  // }) 
+  //   Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmMDY3N2QxZi1mNWM0LTQ1Y2MtYTMwMC0wY2ZhZTFjNjFkMjIiLCJpYXQiOjE2OTM4MTc2MDcsImV4cCI6MTY5MzkwNDAwN30.BpAC03yLfHuUVGcu-naS9Zn-5KC6ye4jHMF_-uXseD0",
+  //   id: "f0677d1f-f5c4-45cc-a300-0cfae1c61d22"
+  // },
+  // { message: "i cannnot believe this", images: [], anonymous: false, themeId:"3841fa45-0e54-401c-a31b-57676ee8f98c" }, 
+  // ) 
 
   let fetchedPosts = [];
   try {
