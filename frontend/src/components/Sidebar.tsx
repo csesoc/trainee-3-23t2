@@ -36,8 +36,8 @@ const Sidebar: React.FC = () => {
             </div>
             
             <div 
-                className={`"w-64 h-screen bg-indigo-900 fixed inset top-0 transform transition-transform ${
-                    isClosed ? 'left-0 transition-all duration-600' : '-left-full transition-all duration-600'}`}>
+                className={`"w-64 h-screen bg-indigo-900 fixed inset top-0 transform transition-transform transition-all duration-800 ${
+                    isClosed ? 'left-0 transition-all duration-800' : '-left-full transition-all duration-800'}`}>
                 <div 
                     onClick={toggleBar}
                     className="flex text-2xl mt-3 mr-4 ml-8 text-white cursor-pointer"
