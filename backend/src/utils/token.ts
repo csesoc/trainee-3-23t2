@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import getHash from "./hash";
+import prisma from "../utils/prisma";
 
 export const generateToken = (userId: string) => {
   return {
@@ -16,7 +16,6 @@ export const verifyToken = async (
   userId: string | undefined
 ) => {
   const secret = process.env.JWT_SECRET as string;
-  const prisma = new PrismaClient();
 
   if (!token || !(token as string).startsWith("Bearer") || !userId) {
     return false;
