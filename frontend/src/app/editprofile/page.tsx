@@ -1,7 +1,14 @@
 "use client";
 import React, { FormEvent, useState } from "react";
 import { defaultPfp } from "../../util/defaultpfp"; 
+import { put, post } from "@/util/request";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+
 export default function EditProfile() {
+  const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
@@ -9,13 +16,42 @@ export default function EditProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  // // Check if user is logged in
+  // const { data: session } = useSession();
+  // if (!session) {
+  //   throw new Error("Unauthorised");
+  // }
+
+  const handleOnSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
+    
+    const formData = {
+      username,
+      email,
+      description,
+      newPassword,
+    };
+  
+    try {
+      // erm
+      const response = await put('/put', formData, {
+        
+      });
+
+      if (response.errorCode) {
+      } 
+
+    } catch (error) {
+      // Handle network or other errors
+      console.error('An error occurred:', error);
+    }
+    router.refresh();
   };
 
   return (
-    <div className="flex pt-[64px]">
+    <>
+    <form onSubmit={handleOnSubmit}>
+    <div className="flex justify-center items-center h-screen">
       {/* Profile Page Left Section */}
       <div className="w-[240px] h-full">
         <div className="w-48 h-48 rounded-full mx-auto">
@@ -47,9 +83,10 @@ export default function EditProfile() {
               <input
                 type="text"
                 id="username"
-                className="w-full border rounded-md p-2"
+                className="w-full border rounded-md p-2 bg-ll-beige placeholder-ll-beige2"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter username"
               />
             </div>
             <div>
@@ -59,9 +96,10 @@ export default function EditProfile() {
               <input
                 type="email"
                 id="email"
-                className="w-full border rounded-md p-2"
+                className="w-full border rounded-md p-2 bg-ll-beige placeholder-ll-beige2"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email"
               />
             </div>
             <div className="col-span-2">
@@ -70,9 +108,11 @@ export default function EditProfile() {
               </label>
               <textarea
                 id="description"
-                className="w-full border rounded-md p-2"
+                className="w-full border rounded-md p-2 bg-ll-beige placeholder-ll-beige2"
+                rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter description"
               ></textarea>
             </div>
           </div>
@@ -80,44 +120,47 @@ export default function EditProfile() {
 
         <div className="mb-4">
           <h2 className="text-2xl font-bold mb-2">Change Password</h2>
-          <form onSubmit={handleSubmit}>
+          
             <div>
-              <label htmlFor="currentPassword" className="block font-medium mb-1">
+              <label htmlFor="currentPassword" className="block font-medium mb-1 ">
                 Current Password
               </label>
               <input
                 type="password"
                 id="currentPassword"
-                className="w-full border rounded-md p-2"
+                className="w-full border rounded-md p-2 bg-ll-beige placeholder-ll-beige2"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter current password"
               />
             </div>
             <div>
-              <label htmlFor="newPassword" className="block font-medium mb-1">
+              <label htmlFor="newPassword" className="block font-medium mb-1 pt-[16px]">
                 New Password
               </label>
               <input
                 type="password"
                 id="newPassword"
-                className="w-full border rounded-md p-2"
+                className="w-full border rounded-md p-2 bg-ll-beige placeholder-ll-beige2"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
               />
             </div>
             <div>
-              <label htmlFor="confirmNewPassword" className="block font-medium mb-1">
+              <label htmlFor="confirmNewPassword" className="block font-medium mb-1 pt-[16px]">
                 Confirm New Password
               </label>
               <input
                 type="password"
                 id="confirmNewPassword"
-                className="w-full border rounded-md p-2"
+                className="w-full border rounded-md p-2 bg-ll-beige placeholder-ll-beige2"
                 value={confirmNewPassword}
                 onChange={(e) => setConfirmNewPassword(e.target.value)}
+                placeholder="Enter confirm new password"
               />
             </div>
-            <div className="text-right"> {/* This div aligns content to the right */}
+            <div className="text-right"> 
               <button
                 type="submit"
                 className="bg-ll-dark-pink text-white p-2 rounded-md mt-[64px]"
@@ -125,10 +168,10 @@ export default function EditProfile() {
                 Update Profile
               </button>
             </div>
-          </form>
         </div>
       </div>
     </div>
+    </form>
+    </>
   );
 }
-

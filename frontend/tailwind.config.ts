@@ -21,6 +21,8 @@ const config: Config = {
         "ll-white": "#FFFFFF",
         "ll-light-pink": "#FCDADA",
         "ll-gray": "#D9D9D9",
+        "ll-beige": "#E5E5E5",
+        "ll-beige2": "#808080",
       },
     },
   },
