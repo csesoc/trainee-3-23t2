@@ -20,13 +20,14 @@ export default async function Home() {
   // },
   // { message: "i cannnot believe this", images: [], anonymous: false, themeId:"3841fa45-0e54-401c-a31b-57676ee8f98c" }, 
   // ) 
-  let user = "Guest"
+  let username = "Guest"
   let userId = ""
   // const session = useSession();
   const session = await getServerSession(options)
   if (session) {
-    user = session.user.username
-    userId = session.user.id
+    const user = session.user as { username: string, profilePicture: string, id: string, authorization: string }
+    username = user.username
+    userId = user.id
     // console.log(session.user.username)
   }
 
@@ -48,7 +49,7 @@ export default async function Home() {
     <div className="flex flex-col gap-4 m-12">
       <div>
         <h3>Welcome,</h3>
-        <h2 className="font-bold custom-header">@{user}! </h2>
+        <h2 className="font-bold custom-header">@{username}! </h2>
       </div>
       <div>
         <Divider />
@@ -72,23 +73,7 @@ export default async function Home() {
         }
 
       </div>
-      {/* <div className="Search bar">
-        <p>Search</p>
-      </div>
-
-      <div className="Sort">
-        <p>Sort</p>
-      </div> */}
 
     </div>
   )
 }
-// "use client";
-
-// import { useSession } from "next-auth/react";
-
-// export default function Home() {
-//   const session = useSession();
-//   return <main>Session: {JSON.stringify(session)}</main>;
-
-// }
