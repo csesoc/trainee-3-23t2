@@ -5,19 +5,32 @@ import { get } from "@/util/request";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 
-// export is the dunction that makes it to the website?
 export default function Home() {
   const postFinishedRef = useRef(false);
   const indexRef = useRef(0);
   const [displayPosts, setDisplayPosts] = useState<object[]>([]);
+  const { data: session } = useSession();
+  let username = "Guest";
+  let header = {};
 
   const paginationOffset = 25;
+
+  if (session) {
+    const user = session.user as {
+      authorization: string;
+      id: string;
+      username: string;
+      profilePicture: string;
+    };
+    username = user.username;
+    header = { authorization: user.authorization, id: user.id };
+  }
 
   const loadMore = async (index: number) => {
     const fetchPosts = async () => {
       let fetchedPosts = [];
       try {
-        const { posts } = await get(`/posts?offset=${index}`);
+        const { posts } = await get(`/posts?offset=${index}`, {}, header);
         fetchedPosts = posts;
       } catch (err) {
         fetchedPosts = [];
@@ -26,7 +39,7 @@ export default function Home() {
     };
 
     if (
-      window.innerHeight + window.pageYOffset < document.body.offsetHeight ||
+      window.innerHeight + window.scrollY < document.body.offsetHeight ||
       postFinishedRef.current
     ) {
       return;
@@ -35,11 +48,9 @@ export default function Home() {
     const posts = await fetchPosts();
     if (posts.length === 0) {
       postFinishedRef.current = true;
-      return;
+    } else {
+      setDisplayPosts((prev) => [...prev, ...posts]);
     }
-
-    setDisplayPosts((prev) => [...prev, ...posts]);
-    indexRef.current += paginationOffset;
   };
 
   useEffect(() => {
@@ -50,7 +61,7 @@ export default function Home() {
 
     const getDefaultResults = async () => {
       try {
-        const { posts } = await get(`/posts?offset=0`);
+        const { posts } = await get(`/posts?offset=0`, {}, header);
         setDisplayPosts(posts);
         indexRef.current += paginationOffset;
       } catch (err) {
@@ -58,12 +69,13 @@ export default function Home() {
       }
     };
 
-    const loadOnScroll = () => {
+    const loadOnScroll = async () => {
       if (
-        window.innerHeight + window.pageYOffset >= document.body.offsetHeight &&
+        window.innerHeight + window.scrollY >= document.body.offsetHeight &&
         !postFinishedRef.current
       ) {
-        loadMore(indexRef.current);
+        await loadMore(indexRef.current);
+        indexRef.current += paginationOffset;
       }
     };
 
@@ -73,20 +85,6 @@ export default function Home() {
     window.addEventListener("scroll", loadOnScroll);
     return () => window.removeEventListener("scroll", loadOnScroll);
   }, []);
-
-  let username = "Guest";
-  let userId = "";
-  const { data: session } = useSession();
-  if (session) {
-    const user = session.user as {
-      username: string;
-      profilePicture: string;
-      id: string;
-      authorization: string;
-    };
-    username = user.username;
-    userId = user.id;
-  }
 
   return (
     <div className="flex flex-col gap-4 m-12">
