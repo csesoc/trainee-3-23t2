@@ -3,15 +3,12 @@
 import rose from "@/assets/rose.jpg";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export default function Login() {
   const router = useRouter();
   const [error, setError] = useState("");
-
-  const searchParams = useSearchParams();
 
   const handleOnSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -74,9 +71,9 @@ export default function Login() {
         </form>
         <div className="flex gap-2 items-center">
           <span>Don't have an account?</span>
-          <Link href="/register" className="text-[#007AFF]">
+          <a href="/register" className="text-[#007AFF]">
             Register now!
-          </Link>
+          </a>
         </div>
       </div>
     </div>

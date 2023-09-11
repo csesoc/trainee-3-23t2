@@ -1,10 +1,9 @@
-import getLogger from "src/utils/logger";
-import { PrismaClient } from "@prisma/client";
+import getLogger from "../utils/logger";
 import HttpError from "http-errors";
-import { CommentType } from "src/schema/comment.schema";
+import { CommentType } from "../schema/comment.schema";
+import prisma from "../utils/prisma";
 
 const logger = getLogger();
-const prisma = new PrismaClient();
 
 export const createNewComment = async (
   userId: string,

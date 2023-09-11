@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import { ReplyType } from "src/schema/reply.schema";
-import getLogger from "src/utils/logger";
+import { ReplyType } from "../schema/reply.schema";
+import getLogger from "../utils/logger";
 import HttpError from "http-errors";
+import prisma from "../utils/prisma";
 
 const logger = getLogger();
-const prisma = new PrismaClient();
 
 export const createNewReply = async (
   userId: string,

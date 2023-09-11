@@ -1,11 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import getLogger from "src/utils/logger";
+import getLogger from "../utils/logger";
 import HttpError from "http-errors";
-import { UserType } from "src/schema/user.schema";
-import getHash from "src/utils/hash";
+import getHash from "../utils/hash";
+import prisma from "../utils/prisma";
 
 const logger = getLogger();
-const prisma = new PrismaClient();
 
 export const getUser = async (
   userId: string,

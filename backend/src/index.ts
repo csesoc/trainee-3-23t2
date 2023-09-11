@@ -1,4 +1,4 @@
-import getLogger from "src/utils/logger";
+import getLogger from "./utils/logger";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import errorHandler from "middleware-http-errors";
@@ -518,6 +518,6 @@ app.delete(
 app.use(errorHandler());
 
 // SERVER
-app.listen(3030, () => {
+app.listen(process.env.PORT ?? 3030, () => {
   logger.info("Server starting");
 });

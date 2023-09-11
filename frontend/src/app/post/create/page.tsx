@@ -204,7 +204,7 @@ export default function MakeAPost() {
               <div>
                 <span className="text-sm text-gray-500">
                   {500 - message.length} characters left. Min 1 character. Max
-                  500 characters.{" "}
+                  500 characters and 5 images.{" "}
                 </span>
               </div>
             </div>
@@ -321,7 +321,13 @@ export default function MakeAPost() {
         }`}
         type="submit"
         form="make-a-post"
-        disabled={!readyToSubmit}
+        disabled={
+          (!readyToSubmit ||
+            !session ||
+            !session.user ||
+            afterLoading ||
+            loading) as boolean
+        }
       >
         {!loading ? (
           afterLoading ? (
