@@ -1,6 +1,6 @@
 "use client";
-import Divider from "@/components/heartDivider";
-import PostCard from "@/components/defaultPostCard";
+import Divider from "@/components/HeartDivider";
+import PostCard from "@/components/DefaultPostCard";
 import { get } from "@/util/request";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
