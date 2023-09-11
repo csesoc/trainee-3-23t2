@@ -2,11 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { ZodSchema } from "zod";
 import getLogger from "./logger";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
 import getHash from "./hash";
+import prisma from "../utils/prisma";
 
 const logger = getLogger();
-const prisma = new PrismaClient();
 
 export const validateRequest = (
   schema: ZodSchema,

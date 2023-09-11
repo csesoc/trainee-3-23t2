@@ -1,12 +1,11 @@
-import { PrismaClient } from "@prisma/client";
 import getLogger from "../utils/logger";
 import validator from "validator";
 import HttpError from "http-errors";
 import getHash from "../utils/hash";
 import { generateToken } from "../utils/token";
+import prisma from "../utils/prisma";
 
 const logger = getLogger();
-const prisma = new PrismaClient();
 
 export const registerUser = async (
   username: string,

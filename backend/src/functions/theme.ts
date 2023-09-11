@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { ThemeType } from "../schema/theme.schema";
 import getLogger from "../utils/logger";
+import prisma from "../utils/prisma";
 
 const logger = getLogger();
-const prisma = new PrismaClient();
 
 export const getAllThemes = async (): Promise<{ themes: ThemeType }> => {
   const themes = await prisma.theme.findMany({
