@@ -1,19 +1,14 @@
 "use client";
-// import Image from "next/image";
-import Divider from "@/components/heartDivider"
-import PostCard from "@/components/defaultPostCard"
-import { get, post } from "@/util/request";
-import { getServerSession } from "next-auth/next";
-import { options } from "@/lib/auth"
-import { LoadMore } from "@/components/loadMore";
+import Divider from "@/components/heartDivider";
+import PostCard from "@/components/defaultPostCard";
+import { get } from "@/util/request";
 import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 
 // export is the dunction that makes it to the website?
-export default async function Home() {
+export default function Home() {
   const postFinishedRef = useRef(false);
   const indexRef = useRef(0);
-  // const searchCoursesRef = useRef([]);
-
   const [displayPosts, setDisplayPosts] = useState<object[]>([]);
 
   const paginationOffset = 25;
@@ -22,9 +17,7 @@ export default async function Home() {
     const fetchPosts = async () => {
       let fetchedPosts = [];
       try {
-        const { posts } = (await get(
-          `/posts?offset=${index}`,
-        )) as any;
+        const { posts } = await get(`/posts?offset=${index}`);
         fetchedPosts = posts;
       } catch (err) {
         fetchedPosts = [];
@@ -32,10 +25,10 @@ export default async function Home() {
       return fetchedPosts;
     };
 
-    if (window.innerHeight + window.pageYOffset < document.body.offsetHeight) {
-      return;
-    }
-    if (postFinishedRef.current) {
+    if (
+      window.innerHeight + window.pageYOffset < document.body.offsetHeight ||
+      postFinishedRef.current
+    ) {
       return;
     }
 
@@ -46,6 +39,7 @@ export default async function Home() {
     }
 
     setDisplayPosts((prev) => [...prev, ...posts]);
+    indexRef.current += paginationOffset;
   };
 
   useEffect(() => {
@@ -56,20 +50,12 @@ export default async function Home() {
 
     const getDefaultResults = async () => {
       try {
-        const { posts } = (await get(`/posts?offset=${0}`)) as any;
+        const { posts } = await get(`/posts?offset=0`);
         setDisplayPosts(posts);
         indexRef.current += paginationOffset;
       } catch (err) {
         setDisplayPosts([]);
       }
-    };
-
-    const getInitialDisplayPosts = () => {
-      // if (searchTerm === "") {
-        getDefaultResults();
-      // } else {
-      //   getSearchResults();
-      // }
     };
 
     const loadOnScroll = () => {
@@ -78,43 +64,29 @@ export default async function Home() {
         !postFinishedRef.current
       ) {
         loadMore(indexRef.current);
-        indexRef.current += paginationOffset;
       }
     };
 
     resetRefs();
-    getInitialDisplayPosts();
+    getDefaultResults();
 
     window.addEventListener("scroll", loadOnScroll);
     return () => window.removeEventListener("scroll", loadOnScroll);
   }, []);
 
-
-  let username = "Guest"
-  let userId = ""
-  // const session = useSession();
-  const session = await getServerSession(options)
+  let username = "Guest";
+  let userId = "";
+  const { data: session } = useSession();
   if (session) {
-    const user = session.user as { username: string, profilePicture: string, id: string, authorization: string }
-    username = user.username
-    userId = user.id
-    // console.log(session.user.username)
+    const user = session.user as {
+      username: string;
+      profilePicture: string;
+      id: string;
+      authorization: string;
+    };
+    username = user.username;
+    userId = user.id;
   }
-
-  // let fetchedPosts = [];
-  // try {
-  //   const { posts } = (await get(
-  //     `/posts?offset=${0}`, { method: "GET" }
-  //   )) as any;
-  //   fetchedPosts = posts;
-  // } catch (err) {
-  //   fetchedPosts = [];
-  // }
-
-  // fetchedPosts = fetchedPosts.filter((post: any) => {
-  //   return userId != post.author.userId ? true : false
-  // })
-
 
   return (
     <div className="flex flex-col gap-4 m-12">
@@ -126,26 +98,24 @@ export default async function Home() {
         <Divider />
       </div>
       <div className="grid gap-6 grid-cols-[repeat(auto-fit,_minmax(220px,_1fr))]">
-        {
-          displayPosts.map((post: any) => {
-            return <PostCard 
-                      msg={post.message} 
-                      textColor={post.theme.textColor}
-                      backgroundColor={post.theme.backgroundColor}
-                      image={post.theme.image}
-                      name={post.theme.name}
-                      likes={post.likes.length}
-                      comments={post.comments.length}
-                      profile={post.author.profilePicture}
-                      anonymous={post.anonymous}
-                      username={post.author.username}
-                      id={post.postId}/>;
-          })
-        }
-        {/* <LoadMore /> */}
-
+        {displayPosts.map((post: any) => {
+          return (
+            <PostCard
+              msg={post.message}
+              textColor={post.theme.textColor}
+              backgroundColor={post.theme.backgroundColor}
+              image={post.theme.image}
+              name={post.theme.name}
+              likes={post.likes.length}
+              comments={post.comments.length}
+              profile={post.author.profilePicture}
+              anonymous={post.anonymous}
+              username={post.author.username}
+              id={post.postId}
+            />
+          );
+        })}
       </div>
-
     </div>
-  )
+  );
 }
