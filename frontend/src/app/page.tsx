@@ -4,11 +4,14 @@ import PostCard from "@/components/defaultPostCard";
 import { get } from "@/util/request";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
+import Spinner from "@/components/Spinner";
 
 export default function Home() {
   const postFinishedRef = useRef(false);
+  const loadingRef = useRef(false);
   const indexRef = useRef(0);
   const [displayPosts, setDisplayPosts] = useState<object[]>([]);
+  const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
   let username = "Guest";
   let header = {};
@@ -26,21 +29,29 @@ export default function Home() {
     header = { authorization: user.authorization, id: user.id };
   }
 
+  const changeLoading = (loading: boolean) => {
+    loadingRef.current = loading;
+    setLoading(loading);
+  };
+
   const loadMore = async (index: number) => {
     const fetchPosts = async () => {
       let fetchedPosts = [];
+      changeLoading(true);
       try {
         const { posts } = await get(`/posts?offset=${index}`, {}, header);
         fetchedPosts = posts;
       } catch (err) {
         fetchedPosts = [];
       }
+      changeLoading(false);
       return fetchedPosts;
     };
 
     if (
       window.innerHeight + window.scrollY < document.body.offsetHeight ||
-      postFinishedRef.current
+      postFinishedRef.current ||
+      loadingRef.current
     ) {
       return;
     }
@@ -60,6 +71,7 @@ export default function Home() {
     };
 
     const getDefaultResults = async () => {
+      changeLoading(true);
       try {
         const { posts } = await get(`/posts?offset=0`, {}, header);
         setDisplayPosts(posts);
@@ -67,12 +79,14 @@ export default function Home() {
       } catch (err) {
         setDisplayPosts([]);
       }
+      changeLoading(false);
     };
 
     const loadOnScroll = async () => {
       if (
         window.innerHeight + window.scrollY >= document.body.offsetHeight &&
-        !postFinishedRef.current
+        !postFinishedRef.current &&
+        !loadingRef.current
       ) {
         await loadMore(indexRef.current);
         indexRef.current += paginationOffset;
@@ -114,6 +128,7 @@ export default function Home() {
           );
         })}
       </div>
+      <div className="m-auto">{loading && <Spinner fill="#000000" />}</div>
     </div>
   );
 }
