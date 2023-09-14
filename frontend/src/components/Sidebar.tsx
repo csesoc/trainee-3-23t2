@@ -24,7 +24,7 @@ const Sidebar: React.FC = () => {
                 </div>
 
                 <div 
-                    className = "absolute right-28 items-center px-4 py-2 text-xl no-underline text-white transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md cursor-pointer" 
+                    className = "absolute right-28 items-center px-4 py-2 text-xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
                 >
                     <span style={{marginLeft: '8px', marginRight: '4px'}}>
                         <a href={'/login'}>Sign in</a>
@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
                 </div>
 
                 <div 
-                    className = "absolute right-0 items-center px-4 py-2 text-xl font-bold no-underline text-white transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md cursor-pointer" 
+                    className = "absolute right-0 items-center px-4 py-2 text-xl font-bold no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
                 >
                     <span style={{marginLeft: '8px', marginRight: '4px'}}>
                         <a href={'/register'}>Sign up</a>
@@ -47,7 +47,7 @@ const Sidebar: React.FC = () => {
             </div>
 
             <div 
-                className={`w-27 h-screen bg-stone-300 fixed inset ${
+                className={`w-27 h-screen bg-white outline outline-3 outline-stone-300 fixed inset ${
                     !isClosed ? 'left-0 transition-all duration-800' : 'left-0 transition-all duration-800'}`}>
                 
                 <div 
@@ -63,12 +63,12 @@ const Sidebar: React.FC = () => {
                         return (
                             <div className = "flex items-center mx-2 w-full h-20" key={index}>
                                 <div 
-                                    className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer" 
+                                    className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-red-900 hover:rounded-md hover:mx-2 cursor-pointer" 
                                 >
                                     {item.icon}
 
                                     {/* {session || !item.needs_session ? (
-                                        <div className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer">
+                                        <div className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer">
                                             {item.icon}
                                         </div>
                                     ) : (
@@ -83,23 +83,24 @@ const Sidebar: React.FC = () => {
                     <div className = "fixed items-center w-full bottom-7">
                         <div className = "flex items-center mx-2 w-full h-20">
                             <div 
-                                className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md cursor-pointer" 
-                            >
-                                {<UserCircleIcon className="w-6 h-6 text-ll-black"/>}
+                                className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
+                            >   
+                            {<UserCircleIcon className="w-6 h-6 text-ll-dark-pink"/>}
+                                {/* {<UserCircleIcon className="w-6 h-6 text-ll-black"/>} */}
                             </div>
                         </div>
                         <div className = "flex items-center mx-2 w-full h-[75px]">
                             <div 
-                                className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md cursor-pointer" 
+                                className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
                             >
-                                {<MoonIcon className="w-6 h-6 text-ll-black"/>}
+                                {<MoonIcon className="w-6 h-6 text-ll-dark-pink"/>}
                             </div>
                         </div>
                         <div className = "flex items-center mx-2 w-full h-20">
                             <div 
-                                className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md cursor-pointer" 
+                                className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
                             >
-                                {<ArrowLeftOnRectangleIcon className="w-6 h-6 text-ll-black"/>}
+                                {<ArrowLeftOnRectangleIcon className="w-6 h-6 text-ll-dark-pink"/>}
                             </div>
                         </div>
                     </div>
@@ -107,7 +108,7 @@ const Sidebar: React.FC = () => {
             </div>
             
             <div 
-                className={`w-[320px] h-screen bg-stone-300 fixed inset ${
+                className={`w-[320px] h-screen bg-white fixed inset ${
                     isClosed ? 'left-0 transition-all duration-800' : '-left-full transition-all duration-800'}`}>
                 
                 <div 
@@ -123,7 +124,7 @@ const Sidebar: React.FC = () => {
                         return (
                             <div className = "flex items-center mx-2 w-full h-20" key={index}>
                                 <div 
-                                    className = "flex items-center px-8 py-2 text-2xl no-underline text-black transition-all duration-300 hover:bg-white hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer" 
+                                    className = "flex items-center px-8 py-2 text-2xl no-underline text-black transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer" 
                                 >
                                     {item.icon}
                                     <span style={{marginLeft: '16px'}}>{item.title}</span>
