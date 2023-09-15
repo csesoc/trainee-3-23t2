@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { HeartIcon, MoonIcon } from "@heroicons/react/24/solid"
 import { SidebarData } from './SidebarData';
-import { ArrowLeftOnRectangleIcon, UserCircleIcon } from "@heroicons/react/24/solid"
+import { ArrowLeftOnRectangleIcon, ArrowRightOnRectangleIcon, UserCircleIcon } from "@heroicons/react/24/solid"
 import { useSession } from 'next-auth/react';
 // import { Link } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ const Sidebar: React.FC = () => {
             </div> */}
 
             <div className={`w-screen fixed h-screen inset opacity-50 bg-black ${
-                    isClosed ? 'left-0 transition-all duration-900' : '-left-full transition-all duration-200'}`}>
+                    isClosed ? 'left-0 transition-all' : '-left-full transition-all'}`}>
             </div>
 
             <div 
@@ -55,7 +55,6 @@ const Sidebar: React.FC = () => {
                     className="flex my-7 mx-5 w-16 h-16 text-2xl bg-red-300 transition-all duration-300 hover:bg-red-400 rounded-md items-center cursor-pointer"
                 >
                     <HeartIcon className="mx-5 top-10 w-8 h-8 text-ll-white"/>
-                    {/* <HeartIcon className="mx-5 top-10 w-8 h-8 text-ll-white"/> */}
                 </div>
                 
                 <div>
@@ -63,17 +62,11 @@ const Sidebar: React.FC = () => {
                         return (
                             <div className = "flex items-center mx-2 w-full h-20" key={index}>
                                 <div 
-                                    className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-red-900 hover:rounded-md hover:mx-2 cursor-pointer" 
+                                    className = {`flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-red-900 hover:rounded-md hover:mx-2 cursor-pointer  ${
+                                        session && item.needs_session ? "hidden" : ""
+                                    }`} 
                                 >
                                     {item.icon}
-
-                                    {/* {session || !item.needs_session ? (
-                                        <div className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer">
-                                            {item.icon}
-                                        </div>
-                                    ) : (
-                                        {}
-                                    )}     */}
                                 </div>
                             </div>
                         )
@@ -85,23 +78,28 @@ const Sidebar: React.FC = () => {
                             <div 
                                 className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
                             >   
-                            {<UserCircleIcon className="w-6 h-6 text-ll-dark-pink"/>}
-                                {/* {<UserCircleIcon className="w-6 h-6 text-ll-black"/>} */}
+                            {<UserCircleIcon className="w-7 h-7 text-ll-dark-pink"/>}
+                                {/* {<UserCircleIcon className="w-7 h-7 text-ll-black"/>} */}
                             </div>
                         </div>
                         <div className = "flex items-center mx-2 w-full h-[75px]">
                             <div 
                                 className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
                             >
-                                {<MoonIcon className="w-6 h-6 text-ll-dark-pink"/>}
+                                {<MoonIcon className="w-7 h-7 text-ll-dark-pink"/>}
                             </div>
                         </div>
                         <div className = "flex items-center mx-2 w-full h-20">
                             <div 
-                                className = "flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer" 
-                            >
-                                {<ArrowLeftOnRectangleIcon className="w-6 h-6 text-ll-dark-pink"/>}
+                                className = {`flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer ${session ? "hidden" : ""}`}>
+                                {<ArrowLeftOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>}
                             </div>
+
+                            <div 
+                                className = {`flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer ${!session ? "hidden" : ""}`}>
+                                {<ArrowRightOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>}
+                            </div>
+
                         </div>
                     </div>
                 </div>                
@@ -124,7 +122,9 @@ const Sidebar: React.FC = () => {
                         return (
                             <div className = "flex items-center mx-2 w-full h-20" key={index}>
                                 <div 
-                                    className = "flex items-center px-8 py-2 text-2xl no-underline text-black transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer" 
+                                    className = {`flex items-center px-8 py-2 text-2xl no-underline text-black transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md hover:mx-2 cursor-pointer ${
+                                        session && item.needs_session ? "hidden" : ""
+                                    }`} 
                                 >
                                     {item.icon}
                                     <span style={{marginLeft: '16px'}}>{item.title}</span>
@@ -153,12 +153,16 @@ const Sidebar: React.FC = () => {
                         <br/>
 
                         <div className = "outline outline-offset-2 outline-3 outline-red-300 rounded-md">
-                            <div 
-                                className = "flex items-center px-16 py-2 text-2xl text-black no-underline transition-all duration-300 hover:text-red-900 hover:bg-red-300 hover:rounded-md cursor-pointer" 
-                            >
-                                {<ArrowLeftOnRectangleIcon className="w-6 h-6 text-ll-dark-pink"/>}
-                                <span style={{marginLeft: '16px'}}>{"Logout"}</span>
+                            <div className = {`flex items-center px-16 py-2 text-2xl text-black no-underline transition-all duration-300 hover:text-red-900 hover:bg-red-300 hover:rounded-md cursor-pointer ${!session ? "hidden" : ""}`}>
+                                    <ArrowRightOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>
+                                    <span style={{marginLeft: '16px'}}>{"Sign In"}</span> 
                             </div>
+
+                            <div className = {`flex items-center px-16 py-2 text-2xl text-black no-underline transition-all duration-300 hover:text-red-900 hover:bg-red-300 hover:rounded-md cursor-pointer ${session ? "hidden" : ""}`}>
+                                <ArrowLeftOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>
+                                <span style={{marginLeft: '16px'}}>{"Logout"}</span> 
+                            </div>
+
                         </div>
                     </div>
                 </div>                
