@@ -117,8 +117,14 @@ export default function ReplyModal({
   return (
     <>
       <div
-        className="flex gap-2 items-center cursor-pointer"
-        onClick={openModal}
+        className={`flex gap-2 items-center relative ${
+          user
+            ? "cursor-pointer"
+            : "cursor-not-allowed hover:after:content-['Not_Signed_In!'] hover:after:-top-8 hover:after:-left-full hover:after:px-2 hover:after:py-1 hover:after:min-w-max hover:after:text-sm hover:after:bg-black/75 hover:after:absolute hover:after:rounded-md hover:after:text-white"
+        }`}
+        onClick={() => {
+          if (user) openModal();
+        }}
       >
         <ChatBubbleBottomCenterTextIcon className="w-5 h-5" />
         {replyLength}

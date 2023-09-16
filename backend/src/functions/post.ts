@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import { PostType } from "../schema/post.schema";
 import getLogger from "../utils/logger";
 import HttpError from "http-errors";
+import prisma from "../utils/prisma";
 
 const logger = getLogger();
-const prisma = new PrismaClient();
 
 export const getAllPosts = async (
   offset: number,

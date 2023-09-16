@@ -5,10 +5,44 @@ import Image from "next/image";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import ReplyModal from "@/components/ReplyModal";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { post } from "@/util/request";
+import { useRouter } from "next/navigation";
 
 export default function Comment({ comment }: { comment: any }) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const c = comment;
+
+  const { data: session } = useSession();
+  const user = session?.user as {
+    authorization: string;
+    id: string;
+    username: string;
+    profilePicture: string;
+  };
+
+  const commentLiked = user && c.likes.includes(user.id);
+
+  const likeComment = async (like: boolean) => {
+    if (!user) return;
+    await post(
+      `/comment/like/${c.commentId}`,
+      { like },
+      { authorization: user.authorization, id: user.id }
+    );
+    router.refresh();
+  };
+
+  const likeReply = async (replyId: string, like: boolean) => {
+    if (!user) return;
+    await post(
+      `/reply/like/${replyId}`,
+      { like },
+      { authorization: user.authorization, id: user.id }
+    );
+    router.refresh();
+  };
 
   return (
     <div className="space-y-4">
@@ -40,8 +74,14 @@ export default function Comment({ comment }: { comment: any }) {
         </div>
       )}
       <div className="flex gap-4 items-center flex-wrap">
-        <div className="flex gap-2 items-center">
-          {/* TODO: Like indicator when user already liked */}
+        <div
+          className={`flex gap-2 items-center relative ${
+            user
+              ? "cursor-pointer"
+              : "cursor-not-allowed hover:after:content-['Not_Signed_In!'] hover:after:-top-8 hover:after:-left-full hover:after:px-2 hover:after:py-1 hover:after:min-w-max hover:after:text-sm hover:after:bg-black/75 hover:after:absolute hover:after:rounded-md hover:after:text-white"
+          } ${commentLiked ? "text-ll-dark-pink" : "text-black"}`}
+          onClick={() => likeComment(!commentLiked)}
+        >
           <HandThumbUpIcon className="w-5 h-5" />
           {c.likes.length}
         </div>
@@ -86,8 +126,20 @@ export default function Comment({ comment }: { comment: any }) {
                 </div>
               )}
               <div className="flex gap-4 items-center flex-wrap">
-                {/* TODO: Like indicator when user already liked */}
-                <div className="flex gap-2 items-center">
+                <div
+                  className={`flex gap-2 items-center relative ${
+                    user
+                      ? "cursor-pointer"
+                      : "cursor-not-allowed hover:after:content-['Not_Signed_In!'] hover:after:-top-8 hover:after:-left-full hover:after:px-2 hover:after:py-1 hover:after:min-w-max hover:after:text-sm hover:after:bg-black/75 hover:after:absolute hover:after:rounded-md hover:after:text-white"
+                  } ${
+                    user && r.likes.includes(user.id)
+                      ? "text-ll-dark-pink"
+                      : "text-black"
+                  }`}
+                  onClick={() =>
+                    likeReply(r.replyId, !(user && r.likes.includes(user.id)))
+                  }
+                >
                   <HandThumbUpIcon className="w-5 h-5" />
                   {r.likes.length}
                 </div>

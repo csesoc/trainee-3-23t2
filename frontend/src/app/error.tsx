@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 export default function Error({ error }: { error: Error }) {
   return (
     <>
@@ -12,12 +10,12 @@ export default function Error({ error }: { error: Error }) {
           <p className="max-w-md text-center">
             You don't have the required access to access this page.
           </p>
-          <Link
+          <a
             className="bg-ll-dark-pink text-white font-bold p-4 inline-block rounded-lg transition-all duration-150 hover:bg-red-500/75"
             href="/"
           >
             Return to Home
-          </Link>
+          </a>
         </div>
       ) : (
         <div className="flex justify-center items-center flex-col h-screen gap-4">
@@ -26,12 +24,12 @@ export default function Error({ error }: { error: Error }) {
           <p className="max-w-md text-center">
             Sorry, something broke in our end :( Please try again later.
           </p>
-          <Link
+          <a
             className="bg-ll-dark-pink text-white font-bold p-4 inline-block rounded-lg transition-all duration-150 hover:bg-red-500/75"
             href="/"
           >
             Return to Home
-          </Link>
+          </a>
         </div>
       )}
     </>

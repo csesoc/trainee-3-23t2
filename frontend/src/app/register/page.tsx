@@ -4,7 +4,6 @@ import rose from "@/assets/rose.jpg";
 import { post } from "@/util/request";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 
@@ -16,7 +15,6 @@ type InputType = {
 };
 
 export default function Register() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [inputs, setInputs] = useState<InputType>({
     email: "",
@@ -141,9 +139,9 @@ export default function Register() {
         </form>
         <div className="flex gap-2 items-center">
           <span>Already have an account?</span>
-          <Link href="/register" className="text-[#007AFF]">
+          <a href="/register" className="text-[#007AFF]">
             Register
-          </Link>
+          </a>
         </div>
       </div>
     </div>
