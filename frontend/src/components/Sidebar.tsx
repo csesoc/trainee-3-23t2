@@ -92,12 +92,17 @@ const Sidebar: React.FC = () => {
                         <div className = "flex items-center mx-2 w-full h-20">
                             <div 
                                 className = {`flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer ${!session ? "hidden" : ""}`}>
-                                {<ArrowLeftOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>}
+                                <a href={'/logout'}>
+                                    {<ArrowLeftOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>}
+                                </a>
                             </div>
 
                             <div 
                                 className = {`flex items-center px-8 py-2 text-2xl no-underline text-white transition-all duration-300 hover:bg-red-100 hover:text-blue-800 hover:rounded-md cursor-pointer ${session ? "hidden" : ""}`}>
-                                {<ArrowRightOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>}
+                                
+                                <a href={'/login'}>
+                                    {<ArrowRightOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>}
+                                </a>
                             </div>
 
                         </div>
@@ -155,12 +160,12 @@ const Sidebar: React.FC = () => {
                         <div className = "outline outline-offset-2 outline-3 outline-red-300 rounded-md">
                             <div className = {`flex items-center px-16 py-2 text-2xl text-black no-underline transition-all duration-300 hover:text-red-900 hover:bg-red-300 hover:rounded-md cursor-pointer ${session ? "hidden" : ""}`}>
                                     <ArrowRightOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>
-                                    <span style={{marginLeft: '16px'}}>{"Sign In"}</span> 
+                                    <a href={'/login'} style={{marginLeft: '16px'}} >Sign in</a>
                             </div>
 
                             <div className = {`flex items-center px-16 py-2 text-2xl text-black no-underline transition-all duration-300 hover:text-red-900 hover:bg-red-300 hover:rounded-md cursor-pointer ${!session ? "hidden" : ""}`}>
                                 <ArrowLeftOnRectangleIcon className="w-7 h-7 text-ll-dark-pink"/>
-                                <span style={{marginLeft: '16px'}}>{"Logout"}</span> 
+                                <a href={'/logout'} style={{marginLeft: '16px'}} >Logout</a>
                             </div>
 
                         </div>
