@@ -100,6 +100,7 @@ export const getUser = async (
     logger.info(`User with userId ${userId} doesn't exists.`);
     throw HttpError(400, `User with userId ${userId} doesn't exists`);
   }
+  logger.info("User found!");
   return {
     userId: user.userId,
     username: user.username,

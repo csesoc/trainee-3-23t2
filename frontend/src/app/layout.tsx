@@ -23,9 +23,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <Provider session={session}>
-        <body className={poppins.className}>
-          <Sidebar />
-          <div>{children}</div>
+        <body className={`${poppins.className} isolate`}>
+          <div className="fixed z-10">
+            <Sidebar />
+          </div>
+          <div className="ml-16">{children}</div>
         </body>
       </Provider>
     </html>
