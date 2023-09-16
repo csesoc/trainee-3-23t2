@@ -1,6 +1,7 @@
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { defaultPfp } from "@/util/defaultpfp";
 
 type PostCardProps = {
   msg: string;
@@ -32,7 +33,7 @@ const PostCard: React.FC<PostCardProps> = (props: PostCardProps) => {
         <div className="flex flex-col p-5 left-5 gap-y-3">
           <div className="flex flex-row gap-x-2 relative items-center flex-wrap">
             <Image
-              src={props.profile}
+              src={props.anonymous ? defaultPfp : props.profile}
               alt="Profile picture"
               width={24}
               height={24}

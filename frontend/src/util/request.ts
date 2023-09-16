@@ -4,7 +4,7 @@ const request = async (
   options?: Record<string, any>,
   headers?: Record<string, any>
 ) => {
-  const baseUrl = process.env.API_URL ?? "http://localhost:3030";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3030";
   const url = `${baseUrl}${path}`;
 
   const payload =
