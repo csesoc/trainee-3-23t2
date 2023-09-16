@@ -479,13 +479,14 @@ app.put(
       if (req.headers.id !== userId) {
         return res.status(401).json({ error: "Unauthorised" });
       }
-      const { username, email, password, description, profilePicture } =
+      const { username, email, oldPassword, newPassword, description, profilePicture } =
         req.body;
       const result = await updateUser(
         userId,
         username,
         email,
-        password,
+        oldPassword,
+        newPassword,
         description,
         profilePicture
       );

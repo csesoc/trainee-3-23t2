@@ -201,7 +201,8 @@ export const updateUser = async (
   userId: string,
   username: string,
   email: string,
-  password: string,
+  oldPassword: string | undefined,
+  newPassword: string | undefined,
   description: string,
   profilePicture: string
 ) => {
@@ -214,6 +215,16 @@ export const updateUser = async (
   if (!userExists) {
     logger.info(`User with userId ${userId} doesn't exists.`);
     throw HttpError(400, `User with userId ${userId} doesn't exists`);
+  }
+  // If only one password is given
+  if ((!oldPassword && newPassword) || (oldPassword && !newPassword)) {
+    logger.info("Only one password is given (old or new password).");
+    throw HttpError(400, "Required both new and old password.");
+  }
+  // Old password don't match
+  if (oldPassword && getHash(oldPassword) !== userExists.password) {
+    logger.info("Old password doesn't match.");
+    throw HttpError(400, "Old password doesn't match.");
   }
   // Check if email or username has been used
   const emailUsed = await prisma.user.findFirst({
@@ -235,18 +246,32 @@ export const updateUser = async (
     throw HttpError(400, "Username given already used.");
   }
   // Update user
-  await prisma.user.update({
-    where: {
-      userId,
-    },
-    data: {
-      username,
-      email,
-      password: getHash(password),
-      description,
-      profilePicture,
-    },
-  });
+  if (newPassword) {
+    await prisma.user.update({
+      where: {
+        userId,
+      },
+      data: {
+        username,
+        email,
+        password: getHash(newPassword),
+        description,
+        profilePicture,
+      },
+    });
+  } else {
+    await prisma.user.update({
+      where: {
+        userId,
+      },
+      data: {
+        username,
+        email,
+        description,
+        profilePicture,
+      },
+    });
+  }
   return {};
 };
 
