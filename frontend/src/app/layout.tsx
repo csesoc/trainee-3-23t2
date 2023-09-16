@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { Poppins } from "next/font/google";
 import Provider from "@/lib/session-context";
+import Sidebar from "@/components/Sidebar";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -21,9 +22,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={poppins.className}>
-        <Provider session={session}>{children}</Provider>
-      </body>
+      <Provider session={session}>
+        <body className={poppins.className}>
+          <Sidebar />
+          <div>{children}</div>
+        </body>
+      </Provider>
     </html>
   );
 }
