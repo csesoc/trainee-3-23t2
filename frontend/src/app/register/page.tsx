@@ -1,10 +1,10 @@
 "use client";
 
 import rose from "@/assets/rose.jpg";
+import Spinner from "@/components/Spinner";
 import { post } from "@/util/request";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 
 type InputType = {
@@ -16,6 +16,7 @@ type InputType = {
 
 export default function Register() {
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState<InputType>({
     email: "",
     password: "",
@@ -36,11 +37,13 @@ export default function Register() {
   const handleOnSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const target = e.target as HTMLFormElement;
+    setLoading(true);
     const res = await post("/auth/register", {
       username: target.username.value,
       email: target.email.value,
       password: target.password.value,
     });
+    setLoading(false);
     if (res.errorCode) {
       return setError(res.errorMessage);
     }
@@ -127,14 +130,16 @@ export default function Register() {
           </div>
           <button
             type="submit"
-            disabled={!readyToSubmit}
+            disabled={!readyToSubmit || loading}
             className={`w-full py-2 text-white font-bold rounded-md ${
               readyToSubmit
                 ? "bg-[#007AFF] cursor-pointer"
                 : "bg-[#007AFF]/60 cursor-not-allowed"
             }`}
           >
-            Log in
+            <div className="m-0 inline-block">
+              {loading ? <Spinner /> : <span>Register</span>}
+            </div>
           </button>
         </form>
         <div className="flex gap-2 items-center">
