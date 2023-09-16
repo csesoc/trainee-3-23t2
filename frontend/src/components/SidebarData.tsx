@@ -4,7 +4,7 @@ import { HomeIcon, PencilSquareIcon, FireIcon, CurrencyDollarIcon, BookmarkIcon 
 export const SidebarData = [
     {
         title: 'Home',
-        path: '/',
+        path: '/home',
         icon: <HomeIcon className="w-7 h-7 text-ll-dark-pink"/>,
         needs_session: false
     },
