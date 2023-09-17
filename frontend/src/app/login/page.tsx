@@ -1,18 +1,35 @@
 "use client";
 
 import rose from "@/assets/rose.jpg";
+import Spinner from "@/components/Spinner";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+
+type InputType = {
+  password: string;
+  username: string;
+};
 
 export default function Login() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [inputs, setInputs] = useState<InputType>({
+    password: "",
+    username: "",
+  });
+
+  const readyToSubmit = useMemo(
+    () => inputs.password && inputs.username,
+    [inputs]
+  );
 
   const handleOnSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const target = e.target as HTMLFormElement;
+    setLoading(true);
     try {
       const res = await signIn("credentials", {
         redirect: false,
@@ -20,12 +37,14 @@ export default function Login() {
         password: target.password.value,
         callbackUrl: "/",
       });
+      setLoading(false);
       if (!res?.error) {
         router.push("/");
       } else {
         setError("Invalid username or password");
       }
     } catch (err: any) {
+      setLoading(false);
       setError(err.message);
     }
   };
@@ -49,6 +68,13 @@ export default function Login() {
                 type="text"
                 className="w-full px-4 py-2 outline-none rounded-md bg-gray-100"
                 name="username"
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setInputs((prev: InputType) => {
+                    const newObj = { ...prev };
+                    newObj.username = e.target.value;
+                    return newObj;
+                  })
+                }
                 placeholder="Please enter your username!"
               />
             </div>
@@ -58,15 +84,29 @@ export default function Login() {
                 type="password"
                 className="w-full px-4 py-2 outline-none rounded-md bg-gray-100"
                 name="password"
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setInputs((prev: InputType) => {
+                    const newObj = { ...prev };
+                    newObj.password = e.target.value;
+                    return newObj;
+                  })
+                }
                 placeholder="Please enter your password!"
               />
             </div>
           </div>
           <button
             type="submit"
-            className="bg-[#007AFF] w-full py-2 text-white font-bold rounded-md"
+            disabled={!readyToSubmit || loading}
+            className={`w-full py-2 text-white font-bold rounded-md ${
+              readyToSubmit
+                ? "bg-[#007AFF] cursor-pointer"
+                : "bg-[#007AFF]/60 cursor-not-allowed"
+            }`}
           >
-            Log in
+            <div className="m-0 inline-block">
+              {loading ? <Spinner /> : <span>Log In</span>}
+            </div>
           </button>
         </form>
         <div className="flex gap-2 items-center">

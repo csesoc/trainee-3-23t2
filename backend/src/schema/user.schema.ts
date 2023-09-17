@@ -24,7 +24,8 @@ export const UserLoginSchema = z.object({
 export const UpdateUserSchema = z.object({
   username: z.string(),
   email: z.string(),
-  password: z.string(),
+  oldPassword: z.string().optional(),
+  newPassword: z.string().optional(),
   description: z.string(),
   profilePicture: z.string(),
 });
